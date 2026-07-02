@@ -2,7 +2,7 @@ import { createContext, useContext, useEffect, useState, type ReactNode } from '
 import { useColorScheme } from 'react-native';
 
 import { Palettes, type Palette, type ThemeName } from '@/constants/theme';
-import { getString, setString, STORAGE_KEYS } from '@/data/storage';
+import { getStoredTheme, saveStoredTheme } from '@/data/settings.data';
 
 /**
  * Finance-app theme. Holds the user's dark/light preference (persisted to storage), defaulting to the
@@ -27,8 +27,8 @@ export function AppThemeProvider({ children }: { children: ReactNode }) {
   const [preference, setPreferenceState] = useState<ThemeName | null>(null);
 
   useEffect(() => {
-    getString(STORAGE_KEYS.theme).then((value) => {
-      if (value === 'dark' || value === 'light') setPreferenceState(value);
+    getStoredTheme().then((value) => {
+      if (value) setPreferenceState(value);
     });
   }, []);
 
@@ -37,7 +37,7 @@ export function AppThemeProvider({ children }: { children: ReactNode }) {
 
   const setPreference = (next: ThemeName) => {
     setPreferenceState(next);
-    void setString(STORAGE_KEYS.theme, next);
+    void saveStoredTheme(next);
   };
 
   const value: AppTheme = {

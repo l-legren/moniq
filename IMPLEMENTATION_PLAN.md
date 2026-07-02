@@ -16,7 +16,14 @@
       (`jest-expo` + `@react-native/jest-preset`, `pnpm test`, AsyncStorage mock, `types:["jest"]` in
       tsconfig) with a first real test on `data/storage.ts`. Testing policy added to CLAUDE.md.
       `pnpm lint` + `tsc` + `pnpm test` all clean.
-- [ ] **Phase 2 — Data model** (data → services → hooks)
+- [x] **Phase 2 — Data model** (data → services → hooks) — *in review*
+      Decisions: recurring `type` is `'income' | 'expense'`; frequency is a discriminated union
+      `{ kind:'perpetual', cadence } | { kind:'term', cadence, endDate }` with cadence monthly/yearly
+      (yearly normalised ÷12 for the allowance). Added libs: `expo-crypto` (UUIDs), `date-fns` (date math).
+      Optimistic list-prepend factored into `hooks/optimistic.ts`. Theme now routes through
+      `data/settings.data.ts`. Insights = tested aggregation primitives; period navigation lands in
+      Phase 5. 26 unit tests (services + seed + storage); `pnpm test` + `tsc` + `pnpm lint` + iOS export
+      all clean.
 - [ ] **Phase 3 — Today**
 - [ ] **Phase 4 — Recurring**
 - [ ] **Phase 5 — Insights**
