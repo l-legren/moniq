@@ -8,13 +8,12 @@ import {
   useFonts,
 } from '@expo-google-fonts/plus-jakarta-sans';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { DarkTheme, DefaultTheme, ThemeProvider } from 'expo-router';
+import { DarkTheme, DefaultTheme, Stack, ThemeProvider } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import type { ReactNode } from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 import { AnimatedSplashOverlay } from '@/components/animated-icon';
-import AppTabs from '@/components/app-tabs';
 import { AppThemeProvider, useAppTheme } from '@/hooks/use-app-theme';
 
 SplashScreen.preventAutoHideAsync();
@@ -44,7 +43,10 @@ export default function RootLayout() {
         <AppThemeProvider>
           <NavThemeBridge>
             <AnimatedSplashOverlay />
-            <AppTabs />
+            <Stack screenOptions={{ headerShown: false }}>
+              <Stack.Screen name="(tabs)" />
+              <Stack.Screen name="settings" options={{ presentation: 'modal' }} />
+            </Stack>
           </NavThemeBridge>
         </AppThemeProvider>
       </QueryClientProvider>

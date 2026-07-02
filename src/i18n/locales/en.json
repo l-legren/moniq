@@ -18,9 +18,34 @@
     "transport": "Transport",
     "other": "Other"
   },
+  "today": {
+    "addExpense": "Add expense",
+    "add": "Add",
+    "chooseCategory": "Choose a category",
+    "category": "Category",
+    "greetingMorning": "Good morning, {{name}}",
+    "greetingAfternoon": "Good afternoon, {{name}}",
+    "greetingEvening": "Good evening, {{name}}",
+    "openSettings": "Open settings",
+    "amount": "Amount {{amount}}",
+    "deleteDigit": "Delete last digit",
+    "decimalPoint": "Decimal point",
+    "scrollForBalance": "Scroll for balance",
+    "showBalance": "Show remaining balance",
+    "leftToday": "Left today",
+    "overBy": "Over by",
+    "ofBudgetToday": "of {{budget}} today",
+    "activity": "Today's activity",
+    "noActivity": "No expenses logged yet today",
+    "selectCategory": "Select category {{category}}",
+    "expenseRow": "{{category}}, {{time}}, {{amount}}"
+  },
   "settings": {
     "title": "Settings",
     "appearance": "Appearance",
     "darkMode": "Dark mode"
+  },
+  "placeholder": {
+    "comingSoon": "Coming soon"
   }
 }

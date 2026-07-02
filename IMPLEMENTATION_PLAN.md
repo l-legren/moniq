@@ -24,7 +24,14 @@
       `data/settings.data.ts`. Insights = tested aggregation primitives; period navigation lands in
       Phase 5. 26 unit tests (services + seed + storage); `pnpm test` + `tsc` + `pnpm lint` + iOS export
       all clean.
-- [ ] **Phase 3 — Today**
+- [x] **Phase 3 — Today** — *in review*
+      Navigation restructured to a `(tabs)` group (custom minimal `TabBar`) + `settings` modal route;
+      starter screens/components removed. Today = header (avatar → Settings), keypad, inline expanding
+      `CategoryPanel` (bespoke #1, absolute overlay over the keypad), and `ResistedPager` (bespoke #2:
+      quadratic-resisted drag, snap past 0.35, `cubic-bezier(0.32,0.72,0,1)` 420ms, AT "show balance"
+      fallback). Amount-input rules extracted to `services/amount-input.ts` (typed `AmountKey`) + tested.
+      Recurring/Insights/Settings are placeholders (built in Phases 4–6). 31 tests, tsc + lint + iOS
+      export clean. NOT yet run on a simulator — gesture/animation feel needs a device pass.
 - [ ] **Phase 4 — Recurring**
 - [ ] **Phase 5 — Insights**
 - [ ] **Phase 6 — Settings**

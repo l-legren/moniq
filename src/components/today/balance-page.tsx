@@ -1,0 +1,124 @@
+import { useTranslation } from 'react-i18next';
+import { StyleSheet, View } from 'react-native';
+
+import { Hairline } from '@/components/ui/hairline';
+import { AppText } from '@/components/ui/text';
+import { CATEGORY_LABEL_KEYS } from '@/constants/categories';
+import { Spacing } from '@/constants/theme';
+import { useAllowance } from '@/hooks/use-allowance';
+import { useExpenses } from '@/hooks/use-expenses';
+import { todayRemaining } from '@/services/allowance.service';
+import { todayISO } from '@/services/date';
+import { expensesOn, sumAmount, type Expense } from '@/services/expenses.service';
+import { fmt } from '@/services/money';
+
+function BalanceHero({ remaining, dailyBudget }: { remaining: number; dailyBudget: number }) {
+  const { t } = useTranslation();
+  const over = remaining < 0;
+  const caption = over ? t('today.overBy') : t('today.leftToday');
+  const amount = fmt(Math.abs(remaining));
+  const budgetLine = t('today.ofBudgetToday', { budget: fmt(dailyBudget) });
+
+  return (
+    <View accessible accessibilityLabel={`${caption} ${amount} ${budgetLine}`} style={styles.hero}>
+      <AppText variant="sectionLabel" color="text3" importantForAccessibility="no" style={styles.center}>
+        {caption}
+      </AppText>
+      <AppText variant="heroXl" color={over ? 'bad' : 'good'} importantForAccessibility="no" style={styles.center}>
+        {amount}
+      </AppText>
+      <AppText variant="caption" color="text3" importantForAccessibility="no" style={styles.center}>
+        {budgetLine}
+      </AppText>
+    </View>
+  );
+}
+
+function ActivityRow({ expense }: { expense: Expense }) {
+  const { t } = useTranslation();
+  const label = t(CATEGORY_LABEL_KEYS[expense.category]);
+  const amount = `−${fmt(expense.amount)}`;
+
+  return (
+    <View
+      accessible
+      accessibilityLabel={t('today.expenseRow', { category: label, time: expense.time, amount })}
+      style={styles.activityRow}>
+      <View importantForAccessibility="no-hide-descendants">
+        <AppText>{label}</AppText>
+        <AppText variant="small" color="text3">
+          {expense.time}
+        </AppText>
+      </View>
+      <AppText variant="mono" importantForAccessibility="no">
+        {amount}
+      </AppText>
+    </View>
+  );
+}
+
+function ActivityList({ expenses }: { expenses: Expense[] }) {
+  const { t } = useTranslation();
+
+  if (expenses.length === 0) {
+    return (
+      <AppText variant="caption" color="text3">
+        {t('today.noActivity')}
+      </AppText>
+    );
+  }
+
+  return (
+    <View style={styles.activityList}>
+      {expenses.map((expense) => (
+        <ActivityRow key={expense.id} expense={expense} />
+      ))}
+    </View>
+  );
+}
+
+export function BalancePage() {
+  const { t } = useTranslation();
+  const { data: expenses = [] } = useExpenses();
+  const { dailyBudget } = useAllowance();
+
+  const todays = expensesOn(expenses, todayISO());
+  const remaining = todayRemaining(dailyBudget, sumAmount(todays));
+
+  return (
+    <View style={styles.page}>
+      <BalanceHero remaining={remaining} dailyBudget={dailyBudget} />
+      <Hairline style={styles.divider} />
+      <AppText variant="sectionLabel" color="text3">
+        {t('today.activity')}
+      </AppText>
+      <ActivityList expenses={todays} />
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  page: {
+    flex: 1,
+    paddingHorizontal: Spacing.four,
+    paddingTop: Spacing.six,
+  },
+  hero: {
+    gap: Spacing.two,
+  },
+  center: {
+    textAlign: 'center',
+  },
+  divider: {
+    marginVertical: Spacing.four,
+  },
+  activityList: {
+    marginTop: Spacing.three,
+    gap: Spacing.three,
+  },
+  activityRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+});
