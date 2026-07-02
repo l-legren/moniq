@@ -1,0 +1,26 @@
+{
+  "common": {
+    "appName": "moniq",
+    "back": "Back",
+    "confirm": "Confirm",
+    "cancel": "Cancel"
+  },
+  "tabs": {
+    "today": "Today",
+    "recurring": "Recurring",
+    "insights": "Insights"
+  },
+  "categories": {
+    "groceries": "Groceries",
+    "drinks": "Drinks",
+    "restaurants": "Restaurants",
+    "clothing": "Clothing",
+    "transport": "Transport",
+    "other": "Other"
+  },
+  "settings": {
+    "title": "Settings",
+    "appearance": "Appearance",
+    "darkMode": "Dark mode"
+  }
+}

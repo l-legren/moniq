@@ -92,6 +92,26 @@ Data flows **app → hooks → services → data**; imports only ever point one 
 - When adding a new query, add its key here first.
 - Cross-hook invalidations must reference `queryKeys` — never a raw string.
 
+# Testing
+
+Every new piece of functionality or logic ships with a test that would **fail if the behaviour broke** — and nothing more. Tests exist to protect behaviour worth protecting, not to inflate coverage.
+
+Runner: **Jest** (`jest-expo` preset). Test files live next to the code as `<name>.test.ts`. Run with `pnpm test`.
+
+## What to test
+
+- **Business logic first.** The `src/services` layer (formulas, mappers, aggregation, money formatting) and non-trivial `src/data`/`src/hooks` logic are the high-value targets — pure functions with clear inputs/outputs.
+- Cover the **happy path, boundaries, and known edge cases** — a few focused cases, not exhaustive permutations of the same branch.
+- A regression that bit you once deserves a test so it can't come back.
+
+## What NOT to test (avoids bloat)
+
+- Don't write a test that can't fail for a real bug — no restating the implementation, asserting that a mock was called, or checking trivial pass-through getters/constants.
+- Don't test third-party libraries, the React Compiler's output, styling, or static copy.
+- Don't add a test just to raise a coverage number. If you can't name the bug a test guards against, don't write it.
+
+Prefer deleting a low-value test over keeping it. Quality and relevance over quantity.
+
 # Internationalisation
 
 Every string displayed in the app UI must come from i18next — no hardcoded string literals in JSX or `accessibilityLabel` props.

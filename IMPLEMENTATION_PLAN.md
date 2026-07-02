@@ -4,8 +4,18 @@
 > chunk before the next starts. Full plan lives at `~/.claude/plans/now-based-on-the-temporal-dawn.md`.
 
 ## Progress checklist
-- [x] **Phase 0 — CLAUDE.md cleanup** (single-app layered architecture) — *in review*
-- [ ] **Phase 1 — Foundation + theme + primitives**
+- [x] **Phase 0 — CLAUDE.md cleanup** (single-app layered architecture)
+- [x] **Phase 1 — Foundation + theme + primitives** — *in review*
+      Deviations: theme provided via new `AppThemeProvider`/`useAppTheme` (coexists with legacy
+      `useTheme` until starter screens are removed in Phase 3); `data/storage.ts` created early
+      (foundational); interactive primitives (`pill-toggle`, `stat-row`, `sheet`, `switch`) deferred to
+      the phases that consume them, so their APIs match real usage; only display primitives built now
+      (`text`, `screen`, `hairline`). Added `src/types/css.d.ts` for a clean `tsc` gate. ESLint configured:
+      `eslint` + `eslint-config-expo` (flat config `eslint.config.js`, React Compiler-aware react-hooks
+      rules active); approved `unrs-resolver` build in pnpm-workspace.yaml. Jest configured
+      (`jest-expo` + `@react-native/jest-preset`, `pnpm test`, AsyncStorage mock, `types:["jest"]` in
+      tsconfig) with a first real test on `data/storage.ts`. Testing policy added to CLAUDE.md.
+      `pnpm lint` + `tsc` + `pnpm test` all clean.
 - [ ] **Phase 2 — Data model** (data → services → hooks)
 - [ ] **Phase 3 — Today**
 - [ ] **Phase 4 — Recurring**
