@@ -1,9 +1,5 @@
 /**
- * Design tokens for moniq.
- *
- * The finance UI uses the warm palette + type scale below (`Palettes`, `Typography`, `FontFamily`).
- * The legacy `Colors` / `Fonts` exports remain only for the Expo starter screens that are replaced in
- * a later phase — do not use them in new finance UI.
+ * Design tokens for moniq — the warm palette + type scale (`Palettes`, `Typography`, `FontFamily`).
  */
 
 import '@/global.css';
@@ -82,10 +78,28 @@ const tabular: TextStyle = { fontVariant: ['tabular-nums'] };
 
 export const Typography = {
   /** Big hero amount (remaining balance, daily allowance). */
-  heroXl: { fontFamily: FontFamily.light, fontSize: 56, lineHeight: 60, letterSpacing: -1, ...tabular },
-  hero: { fontFamily: FontFamily.light, fontSize: 40, lineHeight: 46, letterSpacing: -0.5, ...tabular },
+  heroXl: {
+    fontFamily: FontFamily.light,
+    fontSize: 56,
+    lineHeight: 60,
+    letterSpacing: -1,
+    ...tabular,
+  },
+  hero: {
+    fontFamily: FontFamily.light,
+    fontSize: 40,
+    lineHeight: 46,
+    letterSpacing: -0.5,
+    ...tabular,
+  },
   /** Keypad amount display. */
-  amount: { fontFamily: FontFamily.light, fontSize: 44, lineHeight: 50, letterSpacing: -0.5, ...tabular },
+  amount: {
+    fontFamily: FontFamily.light,
+    fontSize: 44,
+    lineHeight: 50,
+    letterSpacing: -0.5,
+    ...tabular,
+  },
   /** Page / screen title. */
   title: { fontFamily: FontFamily.medium, fontSize: 18, lineHeight: 24 },
   /** Uppercase section label. */
@@ -126,46 +140,12 @@ export const Spacing = {
 export const BottomTabInset = Platform.select({ ios: 50, android: 80 }) ?? 0;
 export const MaxContentWidth = 800;
 
-/* ------------------------------------------------------------------ *
- * Legacy Expo-starter tokens (removed once starter screens are gone).
- * ------------------------------------------------------------------ */
-
-export const Colors = {
-  light: {
-    text: '#000000',
-    background: '#ffffff',
-    backgroundElement: '#F0F0F3',
-    backgroundSelected: '#E0E1E6',
-    textSecondary: '#60646C',
-  },
-  dark: {
-    text: '#ffffff',
-    background: '#000000',
-    backgroundElement: '#212225',
-    backgroundSelected: '#2E3135',
-    textSecondary: '#B0B4BA',
-  },
+/** Bottom-sheet max heights, as a share of the screen. */
+export const SheetMaxHeight = {
+  /** Tall form sheet (Add Recurring). */
+  tall: '94%',
+  medium: '60%',
+  compact: '40%',
 } as const;
 
-export type ThemeColor = keyof typeof Colors.light & keyof typeof Colors.dark;
-
-export const Fonts = Platform.select({
-  ios: {
-    sans: 'system-ui',
-    serif: 'ui-serif',
-    rounded: 'ui-rounded',
-    mono: 'ui-monospace',
-  },
-  default: {
-    sans: 'normal',
-    serif: 'serif',
-    rounded: 'normal',
-    mono: 'monospace',
-  },
-  web: {
-    sans: 'var(--font-display)',
-    serif: 'var(--font-serif)',
-    rounded: 'var(--font-rounded)',
-    mono: 'var(--font-mono)',
-  },
-});
+export type SheetSize = keyof typeof SheetMaxHeight;

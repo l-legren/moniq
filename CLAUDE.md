@@ -38,10 +38,17 @@ assets/       → fonts, images, icons
 The **React Compiler is enabled** and stable (`babel-plugin-react-compiler@1.x`), via `"reactCompiler": true` in `app.json`.
 
 The compiler auto-memoizes components, values, and functions. **Do not hand-write memoization:**
+
 - No `useMemo`, no `useCallback`, no `React.memo` / `memo()` for performance.
 - Write plain functions and object literals in component bodies; the compiler keeps their references stable (so context values and props passed down stay stable without manual wrapping).
-- Only reach for `useMemo` if a value is expensive to compute *and* the compiler provably can't memoize it (rare) — and leave a comment saying why.
+- Only reach for `useMemo` if a value is expensive to compute _and_ the compiler provably can't memoize it (rare) — and leave a comment saying why.
 - `useRef`, `useState`, `useEffect` are unaffected — keep using them normally.
+
+# Component conventions
+
+- **Name every component's props type after the component** — `ButtonProps`, `SheetProps`, `RecurringSectionProps` — never a generic local `Props`. Applies to all components, including small ones defined inline in the same file.
+- **Extract nested or repeated JSX into its own named component** rather than leaving it inline — a `.map()` item body, an overlay, a section header. Prefer small focused components.
+- **Type props and parameters precisely.** Define a domain union (e.g. `AmountKey`) in the layer that owns it (usually a service) and use it, rather than `string`/`any`.
 
 # Data architecture
 
