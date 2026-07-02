@@ -1,0 +1,5 @@
+node_modules
+.expo
+dist
+pnpm-lock.yaml
+Finance App (Standalone).html
