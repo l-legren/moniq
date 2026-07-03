@@ -4,8 +4,8 @@ import { StyleSheet, View } from 'react-native';
 
 import { AppText } from '@/components/ui/text';
 import { Spacing } from '@/constants/theme';
-import { formatMonthYear } from '@/services/date';
-import { fmtR } from '@/services/money';
+import { formatMonthYear } from '@/utils/date';
+import { fmtR } from '@/utils/money';
 import type { Frequency, RecurringItem } from '@/services/recurring.service';
 
 /** Human subtitle for an item's frequency: "Monthly" / "Yearly" / "Until {month}". */

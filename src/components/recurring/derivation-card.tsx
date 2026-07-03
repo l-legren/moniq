@@ -6,7 +6,7 @@ import { AppText } from '@/components/ui/text';
 import { Radius, Spacing, type PaletteColor } from '@/constants/theme';
 import { useAppTheme } from '@/hooks/use-app-theme';
 import { useAllowance } from '@/hooks/use-allowance';
-import { fmtR } from '@/services/money';
+import { fmtR } from '@/utils/money';
 
 const DAYS_PER_MONTH = 30;
 

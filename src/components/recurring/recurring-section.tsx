@@ -9,7 +9,7 @@ import { Hairline } from '@/components/ui/hairline';
 import { AppText } from '@/components/ui/text';
 import { Spacing } from '@/constants/theme';
 import { useAppTheme } from '@/hooks/use-app-theme';
-import { fmtR } from '@/services/money';
+import { fmtR } from '@/utils/money';
 import type { RecurringItem, RecurringType } from '@/services/recurring.service';
 
 type SectionHeaderProps = {

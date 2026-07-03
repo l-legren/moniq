@@ -5,7 +5,7 @@ import { StyleSheet, View } from 'react-native';
 import { AppText } from '@/components/ui/text';
 import { Radius, Spacing } from '@/constants/theme';
 import { useAppTheme } from '@/hooks/use-app-theme';
-import { fmtR } from '@/services/money';
+import { fmtR } from '@/utils/money';
 
 const MIN = 0;
 const MAX = 1500;

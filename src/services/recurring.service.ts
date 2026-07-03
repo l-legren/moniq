@@ -5,7 +5,7 @@
 import { getRecurringRows, saveRecurringRows, type RecurringRow } from '@/data/recurring.data';
 import { ensureSeeded } from '@/data/seed';
 
-import { makeId } from './id';
+import { makeId } from '@/utils/id';
 
 export type RecurringType = 'income' | 'expense';
 export type Cadence = 'monthly' | 'yearly';

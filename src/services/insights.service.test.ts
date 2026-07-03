@@ -4,9 +4,13 @@ import { mapRowToExpense } from './expenses.service';
 import {
   categoryBreakdown,
   dailySpend,
+  daysInMonthElapsed,
   filterByRange,
   isOnTrack,
+  monthKeysEndingNow,
+  monthRange,
   savedInPeriod,
+  weeklySpendInMonth,
 } from './insights.service';
 
 const exp = (date: string, cat: string, amount: number) =>
@@ -54,5 +58,42 @@ describe('savedInPeriod / isOnTrack', () => {
   it('on track at >= 80% of goal', () => {
     expect(isOnTrack(35, 40)).toBe(true); // 35 >= 32
     expect(isOnTrack(30, 40)).toBe(false); // 30 < 32
+  });
+});
+
+describe('monthRange', () => {
+  it('spans the month, exclusive end', () => {
+    expect(monthRange('2026-07')).toEqual({ start: '2026-07-01', end: '2026-08-01' });
+  });
+
+  it('rolls the year over in December', () => {
+    expect(monthRange('2026-12')).toEqual({ start: '2026-12-01', end: '2027-01-01' });
+  });
+});
+
+describe('monthKeysEndingNow', () => {
+  it('returns the last N months, oldest first, ending on the current month', () => {
+    expect(monthKeysEndingNow(3, new Date(2026, 6, 15))).toEqual(['2026-05', '2026-06', '2026-07']);
+  });
+});
+
+describe('daysInMonthElapsed', () => {
+  it('uses days-so-far for the current month', () => {
+    expect(daysInMonthElapsed('2026-07', new Date(2026, 6, 15))).toBe(15);
+  });
+
+  it('uses the full month for a past month', () => {
+    expect(daysInMonthElapsed('2026-06', new Date(2026, 6, 15))).toBe(30);
+  });
+});
+
+describe('weeklySpendInMonth', () => {
+  it('buckets spend into 7-day windows within the month', () => {
+    const feb = [
+      exp('2026-02-03', 'groceries', 10), // bucket 0 (1–7)
+      exp('2026-02-10', 'drinks', 5), // bucket 1 (8–14)
+      exp('2026-02-25', 'other', 7), // bucket 3 (22–28)
+    ];
+    expect(weeklySpendInMonth(feb, '2026-02')).toEqual([10, 5, 0, 7]);
   });
 });

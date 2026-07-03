@@ -36,7 +36,13 @@
 - [x] **Phase 4 — Recurring** — _in review_ (built in two chunks, 4a display + 4b sheet).
   - 4a: derivation card + two collapsible sections (`RecurringSection` = `SectionHeader` + `RecurringList` + `RecurringItemRow`), animated-height `Collapse`, header with "+". Removed orphaned legacy theme files.
   - 4b: `Sheet` (Modal, 40px top, keyboard-aware), `PillToggle` (type/cadence/frequency), `TextField`, custom pill `MonthPicker`, `SavingsField` (`@react-native-community/slider` + live allowance preview). Confirm tone-colored, disabled until valid. Props-naming convention (`XxxProps`) documented in CLAUDE.md. tsc + lint + 31 tests + iOS export clean. Not device-tested yet.
-- [ ] **Phase 5 — Insights**
+- [x] **Phase 5 — Insights** — _in review_. Weekly/Monthly toggle + period navigator (3 periods),
+      `use-insights` hook aggregating real logged expenses (period-scoped saved/goal/on-track, weekly-spend
+      & daily-spend bars, category breakdown), charts via **react-native-gifted-charts** (svg-based, Expo
+      Go-safe — chose it over Victory/Skia to avoid a dev-build), hand-rolled category bars, 2 static tips.
+      Added `src/utils/` (`percent`, `id`, `date`, `money` moved out of services). 40 tests; tsc + lint +
+      export clean. Deviations: monthly chart shows "Weekly spend" (concrete) vs prototype's "weekly
+      savings"; "saved" uses days-elapsed. Not device-tested.
 - [ ] **Phase 6 — Settings**
 
 ## Locked decisions

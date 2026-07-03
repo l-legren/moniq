@@ -21,7 +21,7 @@ import {
   type Frequency,
   type RecurringType,
 } from '@/services/recurring.service';
-import { fmtR } from '@/services/money';
+import { fmtR } from '@/utils/money';
 
 type FrequencyKind = Frequency['kind'];
 

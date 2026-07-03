@@ -8,9 +8,9 @@ import { Spacing } from '@/constants/theme';
 import { useAllowance } from '@/hooks/use-allowance';
 import { useExpenses } from '@/hooks/use-expenses';
 import { todayRemaining } from '@/services/allowance.service';
-import { todayISO } from '@/services/date';
+import { todayISO } from '@/utils/date';
 import { expensesOn, sumAmount, type Expense } from '@/services/expenses.service';
-import { fmt } from '@/services/money';
+import { fmt } from '@/utils/money';
 
 function BalanceHero({ remaining, dailyBudget }: { remaining: number; dailyBudget: number }) {
   const { t } = useTranslation();
@@ -21,10 +21,20 @@ function BalanceHero({ remaining, dailyBudget }: { remaining: number; dailyBudge
 
   return (
     <View accessible accessibilityLabel={`${caption} ${amount} ${budgetLine}`} style={styles.hero}>
-      <AppText variant="sectionLabel" color="text3" importantForAccessibility="no" style={styles.center}>
+      <AppText
+        variant="sectionLabel"
+        color="text3"
+        importantForAccessibility="no"
+        style={styles.center}
+      >
         {caption}
       </AppText>
-      <AppText variant="heroXl" color={over ? 'bad' : 'good'} importantForAccessibility="no" style={styles.center}>
+      <AppText
+        variant="heroXl"
+        color={over ? 'bad' : 'good'}
+        importantForAccessibility="no"
+        style={styles.center}
+      >
         {amount}
       </AppText>
       <AppText variant="caption" color="text3" importantForAccessibility="no" style={styles.center}>
@@ -43,7 +53,8 @@ function ActivityRow({ expense }: { expense: Expense }) {
     <View
       accessible
       accessibilityLabel={t('today.expenseRow', { category: label, time: expense.time, amount })}
-      style={styles.activityRow}>
+      style={styles.activityRow}
+    >
       <View importantForAccessibility="no-hide-descendants">
         <AppText>{label}</AppText>
         <AppText variant="small" color="text3">

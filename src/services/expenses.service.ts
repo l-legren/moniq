@@ -5,8 +5,8 @@
 import { CATEGORY_IDS, type CategoryId } from '@/constants/categories';
 import { getExpenseRows, saveExpenseRows, type ExpenseRow } from '@/data/expenses.data';
 
-import { todayISO, isoTime } from './date';
-import { makeId } from './id';
+import { todayISO, isoTime } from '@/utils/date';
+import { makeId } from '@/utils/id';
 
 export type Expense = {
   id: string;
