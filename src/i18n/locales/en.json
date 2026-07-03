@@ -110,10 +110,11 @@
   },
   "settings": {
     "title": "Settings",
+    "back": "Back",
     "appearance": "Appearance",
-    "darkMode": "Dark mode"
-  },
-  "placeholder": {
-    "comingSoon": "Coming soon"
+    "darkMode": "Dark mode",
+    "account": "Account",
+    "logOut": "Log out",
+    "deleteAccount": "Delete account"
   }
 }

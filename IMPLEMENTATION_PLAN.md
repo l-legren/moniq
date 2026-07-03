@@ -43,7 +43,12 @@
       Added `src/utils/` (`percent`, `id`, `date`, `money` moved out of services). 40 tests; tsc + lint +
       export clean. Deviations: monthly chart shows "Weekly spend" (concrete) vs prototype's "weekly
       savings"; "saved" uses days-elapsed. Not device-tested.
-- [ ] **Phase 6 — Settings**
+- [x] **Phase 6 — Settings** — _in review_. Full-screen modal: `SettingsHeader` (back), `ProfileRow`
+      (static), Appearance section with a custom Reanimated `AppSwitch` wired to `useAppTheme` (persists
+      dark/light), Account section with `Button` `secondary` (Log out) + new `destructive` variant (Delete
+      account) — both intentional non-functional stubs (no auth in MVP). Added the "no chained ternaries"
+      convention to CLAUDE.md; removed the orphaned `PlaceholderScreen`. tsc + lint + 40 tests + export clean.
+      **All six phases now built.**
 
 ## Locked decisions
 

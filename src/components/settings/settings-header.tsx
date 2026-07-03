@@ -3,28 +3,28 @@ import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, View } from 'react-native';
 
 import { AppText } from '@/components/ui/text';
+import { Spacing } from '@/constants/theme';
 import { useAppTheme } from '@/hooks/use-app-theme';
 
-type SheetHeaderProps = {
-  title: string;
-  onClose: () => void;
+type SettingsHeaderProps = {
+  onBack: () => void;
 };
 
-export function SheetHeader({ title, onClose }: SheetHeaderProps) {
+export function SettingsHeader({ onBack }: SettingsHeaderProps) {
   const { t } = useTranslation();
   const { palette } = useAppTheme();
 
   return (
     <View style={styles.row}>
-      <AppText variant="title">{title}</AppText>
       <Pressable
-        onPress={onClose}
+        onPress={onBack}
         accessibilityRole="button"
-        accessibilityLabel={t('common.close')}
+        accessibilityLabel={t('settings.back')}
         hitSlop={8}
       >
-        <Ionicons name="close" size={24} color={palette.text2} />
+        <Ionicons name="chevron-back" size={24} color={palette.text} />
       </Pressable>
+      <AppText variant="title">{t('settings.title')}</AppText>
     </View>
   );
 }
@@ -33,6 +33,9 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
+    gap: Spacing.two,
+    paddingHorizontal: Spacing.four,
+    paddingTop: Spacing.two,
+    paddingBottom: Spacing.three,
   },
 });

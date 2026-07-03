@@ -4,7 +4,7 @@
 
 import '@/global.css';
 
-import { Platform, type TextStyle } from 'react-native';
+import { type TextStyle } from 'react-native';
 
 /* ------------------------------------------------------------------ *
  * Finance design system — warm palette (ported from the prototype)
@@ -136,9 +136,6 @@ export const Spacing = {
   five: 32,
   six: 64,
 } as const;
-
-export const BottomTabInset = Platform.select({ ios: 50, android: 80 }) ?? 0;
-export const MaxContentWidth = 800;
 
 /** Bottom-sheet max heights, as a share of the screen. */
 export const SheetMaxHeight = {

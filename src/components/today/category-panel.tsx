@@ -1,4 +1,4 @@
-import { Ionicons } from '@expo/vector-icons';
+import Ionicons from '@expo/vector-icons/Ionicons';
 import { useTranslation } from 'react-i18next';
 import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
@@ -32,7 +32,8 @@ function CategoryRow({ id, selected, onSelect }: CategoryRowProps) {
           borderColor: selected ? palette.accent : palette.hairline,
           backgroundColor: selected ? palette.accentLight : palette.card,
         },
-      ]}>
+      ]}
+    >
       <AppText color={selected ? 'accent' : 'text'}>{label}</AppText>
       {selected && (
         <AppText color="accent" importantForAccessibility="no" accessibilityElementsHidden>
@@ -54,8 +55,13 @@ function BackButton({ onPress }: { onPress: () => void }) {
       accessibilityLabel={t('common.back')}
       style={({ pressed }) => [
         styles.backButton,
-        { backgroundColor: palette.card, borderColor: palette.hairline, opacity: pressed ? 0.85 : 1 },
-      ]}>
+        {
+          backgroundColor: palette.card,
+          borderColor: palette.hairline,
+          opacity: pressed ? 0.85 : 1,
+        },
+      ]}
+    >
       <Ionicons name="chevron-back" size={22} color={palette.text} />
     </Pressable>
   );
@@ -70,7 +76,13 @@ type Props = {
 };
 
 /** Inline panel that expands over the keypad: scroll to pick a category, then Back / Confirm. */
-export function CategoryPanel({ category, canConfirm, onSelectCategory, onBack, onConfirm }: Props) {
+export function CategoryPanel({
+  category,
+  canConfirm,
+  onSelectCategory,
+  onBack,
+  onConfirm,
+}: Props) {
   const { t } = useTranslation();
   const { palette } = useAppTheme();
 
@@ -78,7 +90,8 @@ export function CategoryPanel({ category, canConfirm, onSelectCategory, onBack, 
     <Animated.View
       entering={FadeIn.duration(180)}
       exiting={FadeOut.duration(120)}
-      style={[styles.overlay, { backgroundColor: palette.bg }]}>
+      style={[styles.overlay, { backgroundColor: palette.bg }]}
+    >
       <AppText variant="sectionLabel" color="text3">
         {t('today.category')}
       </AppText>
@@ -86,7 +99,8 @@ export function CategoryPanel({ category, canConfirm, onSelectCategory, onBack, 
       <ScrollView
         style={styles.list}
         contentContainerStyle={styles.listContent}
-        showsVerticalScrollIndicator={false}>
+        showsVerticalScrollIndicator={false}
+      >
         {CATEGORY_IDS.map((id) => (
           <CategoryRow key={id} id={id} selected={id === category} onSelect={onSelectCategory} />
         ))}
