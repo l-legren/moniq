@@ -3,10 +3,8 @@
  */
 
 import { getSavingsGoalValue, saveSavingsGoalValue } from '@/data/savings.data';
-import { ensureSeeded } from '@/data/seed';
 
 export async function getSavingsGoal(): Promise<number> {
-  await ensureSeeded();
   return (await getSavingsGoalValue()) ?? 0;
 }
 
