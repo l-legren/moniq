@@ -13,7 +13,6 @@ export const STORAGE_KEYS = {
   expenses: 'moniq:expenses',
   recurring: 'moniq:recurring',
   savingsGoal: 'moniq:savingsGoal',
-  seeded: 'moniq:seeded',
 } as const;
 
 export type StorageKey = (typeof STORAGE_KEYS)[keyof typeof STORAGE_KEYS];

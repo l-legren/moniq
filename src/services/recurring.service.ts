@@ -3,7 +3,6 @@
  */
 
 import { getRecurringRows, saveRecurringRows, type RecurringRow } from '@/data/recurring.data';
-import { ensureSeeded } from '@/data/seed';
 
 import { makeId } from '@/utils/id';
 
@@ -11,8 +10,7 @@ export type RecurringType = 'income' | 'expense';
 export type Cadence = 'monthly' | 'yearly';
 
 export type Frequency =
-  | { kind: 'perpetual'; cadence: Cadence }
-  | { kind: 'term'; cadence: Cadence; endDate: string }; // endDate: YYYY-MM
+  { kind: 'perpetual'; cadence: Cadence } | { kind: 'term'; cadence: Cadence; endDate: string }; // endDate: YYYY-MM
 
 export type RecurringItem = {
   id: string;
@@ -55,7 +53,6 @@ export function mapRowToRecurring(row: RecurringRow): RecurringItem {
 }
 
 export async function getRecurring(): Promise<RecurringItem[]> {
-  await ensureSeeded();
   const rows = await getRecurringRows();
   return rows.map(mapRowToRecurring);
 }
