@@ -116,5 +116,16 @@
     "account": "Account",
     "logOut": "Log out",
     "deleteAccount": "Delete account"
+  },
+  "auth": {
+    "title": "Log in",
+    "email": "Email",
+    "password": "Password",
+    "signIn": "Sign in",
+    "errors": {
+      "invalidInput": "Enter your email and password.",
+      "invalidCredentials": "Incorrect email or password.",
+      "unknown": "Something went wrong. Please try again."
+    }
   }
 }

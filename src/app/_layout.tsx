@@ -15,6 +15,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 import { AnimatedSplashOverlay } from '@/components/animated-icon';
 import { AppThemeProvider, useAppTheme } from '@/hooks/use-app-theme';
+import { AuthProvider, useAuth } from '@/hooks/use-auth';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -24,6 +25,24 @@ const queryClient = new QueryClient();
 function NavThemeBridge({ children }: { children: ReactNode }) {
   const { isDark } = useAppTheme();
   return <ThemeProvider value={isDark ? DarkTheme : DefaultTheme}>{children}</ThemeProvider>;
+}
+
+/** Signed-out users only ever see `login`; signed-in users never see it. */
+function RootNavigator() {
+  const { user, isLoading } = useAuth();
+  if (isLoading) return null;
+
+  return (
+    <Stack screenOptions={{ headerShown: false }}>
+      <Stack.Protected guard={!!user}>
+        <Stack.Screen name="(tabs)" />
+        <Stack.Screen name="settings" options={{ presentation: 'modal' }} />
+      </Stack.Protected>
+      <Stack.Protected guard={!user}>
+        <Stack.Screen name="login" />
+      </Stack.Protected>
+    </Stack>
+  );
 }
 
 export default function RootLayout() {
@@ -41,13 +60,12 @@ export default function RootLayout() {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <QueryClientProvider client={queryClient}>
         <AppThemeProvider>
-          <NavThemeBridge>
-            <AnimatedSplashOverlay />
-            <Stack screenOptions={{ headerShown: false }}>
-              <Stack.Screen name="(tabs)" />
-              <Stack.Screen name="settings" options={{ presentation: 'modal' }} />
-            </Stack>
-          </NavThemeBridge>
+          <AuthProvider>
+            <NavThemeBridge>
+              <AnimatedSplashOverlay />
+              <RootNavigator />
+            </NavThemeBridge>
+          </AuthProvider>
         </AppThemeProvider>
       </QueryClientProvider>
     </GestureHandlerRootView>
