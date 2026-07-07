@@ -4,7 +4,7 @@
 
 import type { Session } from '@supabase/supabase-js';
 
-import { getSession, onAuthStateChange, signInWithPassword, signOut } from '@/data/auth.data';
+import { onAuthStateChange, signInWithPassword, signOut } from '@/data/auth.data';
 
 export type AuthUser = {
   id: string;
@@ -25,10 +25,6 @@ export class AuthServiceError extends Error {
 export function mapSessionToUser(session: Session | null): AuthUser | null {
   if (!session) return null;
   return { id: session.user.id, email: session.user.email ?? null };
-}
-
-export async function getCurrentUser(): Promise<AuthUser | null> {
-  return mapSessionToUser(await getSession());
 }
 
 export function subscribeToAuthChanges(callback: (user: AuthUser | null) => void): () => void {

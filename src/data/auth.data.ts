@@ -6,11 +6,6 @@ import type { Session } from '@supabase/supabase-js';
 
 import { supabase } from './supabase';
 
-export async function getSession(): Promise<Session | null> {
-  const { data } = await supabase.auth.getSession();
-  return data.session;
-}
-
 export function onAuthStateChange(callback: (session: Session | null) => void): () => void {
   const {
     data: { subscription },
