@@ -4,6 +4,7 @@ import { StyleSheet, View, type LayoutChangeEvent } from 'react-native';
 import { BarChart } from 'react-native-gifted-charts';
 
 import { AppText } from '@/components/ui/text';
+import { WidgetCard } from '@/components/ui/widget-card';
 import { FontFamily, Radius, Spacing } from '@/constants/theme';
 import { useAppTheme } from '@/hooks/use-app-theme';
 import type { InsightsBar } from '@/hooks/use-insights';
@@ -38,42 +39,44 @@ export function InsightsChart({ title, footer, bars }: InsightsChartProps) {
   const onLayout = (e: LayoutChangeEvent) => setWidth(e.nativeEvent.layout.width);
 
   return (
-    <View style={styles.container} onLayout={onLayout}>
-      <AppText variant="sectionLabel" color="text3">
-        {title}
-      </AppText>
-
-      {hasData ? (
-        <BarChart
-          data={data}
-          width={width || undefined}
-          height={CHART_HEIGHT}
-          barWidth={BAR_WIDTH}
-          spacing={spacing}
-          initialSpacing={INITIAL_SPACING}
-          barBorderTopLeftRadius={Radius.base}
-          barBorderTopRightRadius={Radius.base}
-          hideRules
-          hideYAxisText
-          yAxisThickness={0}
-          xAxisThickness={0}
-          disableScroll
-          xAxisLabelTextStyle={{
-            color: palette.text3,
-            fontFamily: FontFamily.regular,
-            fontSize: 11,
-          }}
-        />
-      ) : (
-        <AppText variant="caption" color="text3" style={styles.empty}>
-          {t('insights.noData')}
+    <WidgetCard>
+      <View style={styles.container} onLayout={onLayout}>
+        <AppText variant="sectionLabel" color="text3">
+          {title}
         </AppText>
-      )}
 
-      <AppText variant="small" color="text3">
-        {footer}
-      </AppText>
-    </View>
+        {hasData ? (
+          <BarChart
+            data={data}
+            width={width || undefined}
+            height={CHART_HEIGHT}
+            barWidth={BAR_WIDTH}
+            spacing={spacing}
+            initialSpacing={INITIAL_SPACING}
+            barBorderTopLeftRadius={Radius.base}
+            barBorderTopRightRadius={Radius.base}
+            hideRules
+            hideYAxisText
+            yAxisThickness={0}
+            xAxisThickness={0}
+            disableScroll
+            xAxisLabelTextStyle={{
+              color: palette.text3,
+              fontFamily: FontFamily.regular,
+              fontSize: 11,
+            }}
+          />
+        ) : (
+          <AppText variant="caption" color="text3" style={styles.empty}>
+            {t('insights.noData')}
+          </AppText>
+        )}
+
+        <AppText variant="small" color="text3">
+          {footer}
+        </AppText>
+      </View>
+    </WidgetCard>
   );
 }
 

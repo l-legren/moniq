@@ -122,34 +122,35 @@ export const FontFamily = {
 const tabular: TextStyle = { fontVariant: ['tabular-nums'] };
 
 export const Typography = {
-  /** Big hero amount (remaining balance, daily allowance). */
+  /** Add-expense keypad amount display. */
   heroXl: {
     fontFamily: FontFamily.light,
     fontSize: 56,
     lineHeight: 60,
-    letterSpacing: -1,
+    letterSpacing: -2,
     ...tabular,
   },
+  /** Remaining-balance hero (Today) / daily-allowance hero (Recurring). */
   hero: {
     fontFamily: FontFamily.light,
     fontSize: 40,
     lineHeight: 46,
-    letterSpacing: -0.5,
+    letterSpacing: -1.5,
     ...tabular,
   },
-  /** Keypad amount display. */
+  /** Insights "saved this period" figure. */
   amount: {
     fontFamily: FontFamily.light,
-    fontSize: 44,
-    lineHeight: 50,
-    letterSpacing: -0.5,
+    fontSize: 32,
+    lineHeight: 38,
+    letterSpacing: -1,
     ...tabular,
   },
   /** Page / screen title. */
   title: { fontFamily: FontFamily.medium, fontSize: 18, lineHeight: 24 },
-  /** Uppercase section label. */
+  /** Uppercase eyebrow / section label (e.g. "INCOME", "TODAY'S ACTIVITY"). */
   sectionLabel: {
-    fontFamily: FontFamily.medium,
+    fontFamily: FontFamily.semibold,
     fontSize: 11,
     lineHeight: 14,
     letterSpacing: 0.4,

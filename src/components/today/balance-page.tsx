@@ -36,7 +36,7 @@ function BalanceHero({ remaining, dailyBudget }: { remaining: number; dailyBudge
         {caption}
       </AppText>
       <AppText
-        variant="heroXl"
+        variant="hero"
         color={over ? 'bad' : 'good'}
         importantForAccessibility="no"
         style={styles.center}

@@ -45,10 +45,11 @@ export function EntryArea({
           {t('today.addExpense')}
         </AppText>
         <AppText
-          variant="amount"
+          variant="heroXl"
           color={hasAmount ? 'text' : 'text3'}
           style={styles.center}
-          accessibilityLabel={t('today.amount', { amount: display })}>
+          accessibilityLabel={t('today.amount', { amount: display })}
+        >
           {display}
         </AppText>
       </View>
