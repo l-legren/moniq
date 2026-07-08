@@ -1,8 +1,6 @@
-import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ScrollView, StyleSheet } from 'react-native';
 
-import { AddRecurringSheet } from '@/components/recurring/add-recurring-sheet';
 import { DerivationCard } from '@/components/recurring/derivation-card';
 import { RecurringHeader } from '@/components/recurring/recurring-header';
 import { RecurringSection } from '@/components/recurring/recurring-section';
@@ -15,14 +13,13 @@ export default function RecurringScreen() {
   const { t } = useTranslation();
   const { data: items = [] } = useRecurring();
   const { incomeTotal, costsTotal } = useAllowance();
-  const [sheetOpen, setSheetOpen] = useState(false);
 
   const income = items.filter((item) => item.type === 'income');
   const costs = items.filter((item) => item.type === 'expense');
 
   return (
     <Screen edges={['top']}>
-      <RecurringHeader onAdd={() => setSheetOpen(true)} />
+      <RecurringHeader />
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <DerivationCard />
         <RecurringSection
@@ -40,7 +37,6 @@ export default function RecurringScreen() {
           emptyLabel={t('recurring.emptyCosts')}
         />
       </ScrollView>
-      <AddRecurringSheet visible={sheetOpen} onClose={() => setSheetOpen(false)} />
     </Screen>
   );
 }

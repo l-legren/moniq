@@ -49,15 +49,21 @@ function Field({ label, children }: FieldProps) {
 type AddRecurringSheetProps = {
   visible: boolean;
   onClose: () => void;
+  /** Type the sheet opens with — the Detail overlay presets this to its own source. */
+  initialType?: RecurringType;
 };
 
-export function AddRecurringSheet({ visible, onClose }: AddRecurringSheetProps) {
+export function AddRecurringSheet({
+  visible,
+  onClose,
+  initialType = 'expense',
+}: AddRecurringSheetProps) {
   const { t } = useTranslation();
   const { incomeTotal, costsTotal, savingsGoal } = useAllowance();
   const addRecurring = useAddRecurring();
   const setSavingsGoal = useSetSavingsGoal();
 
-  const [type, setType] = useState<RecurringType>('expense');
+  const [type, setType] = useState<RecurringType>(initialType);
   const [name, setName] = useState('');
   const [amount, setAmount] = useState('');
   const [cadence, setCadence] = useState<Cadence>('monthly');
@@ -82,7 +88,7 @@ export function AddRecurringSheet({ visible, onClose }: AddRecurringSheetProps) 
   const canConfirm = name.trim().length > 0 && amountValue > 0;
 
   const resetForm = () => {
-    setType('expense');
+    setType(initialType);
     setName('');
     setAmount('');
     setCadence('monthly');

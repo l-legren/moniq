@@ -4,7 +4,9 @@
     "back": "Back",
     "confirm": "Confirm",
     "cancel": "Cancel",
-    "close": "Close"
+    "close": "Close",
+    "seeMore": "See more",
+    "seeMoreOf": "See all {{section}}"
   },
   "tabs": {
     "today": "Today",
@@ -52,8 +54,6 @@
     "monthly": "Monthly",
     "yearly": "Yearly",
     "until": "Until {{month}}",
-    "collapseSection": "Collapse {{section}}",
-    "expandSection": "Expand {{section}}",
     "emptyIncome": "No income added yet",
     "emptyCosts": "No fixed costs added yet",
     "itemRow": "{{name}}, {{subtitle}}, {{amount}}",

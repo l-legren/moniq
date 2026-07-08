@@ -3,8 +3,7 @@ import { StyleSheet, View } from 'react-native';
 
 import { Hairline } from '@/components/ui/hairline';
 import { AppText } from '@/components/ui/text';
-import { Radius, Spacing, type PaletteColor } from '@/constants/theme';
-import { useAppTheme } from '@/hooks/use-app-theme';
+import { Spacing, type PaletteColor } from '@/constants/theme';
 import { useAllowance } from '@/hooks/use-allowance';
 import { fmtR } from '@/utils/money';
 
@@ -37,13 +36,12 @@ function DerivationRow({ label, amount, color }: DerivationRowProps) {
 
 export function DerivationCard() {
   const { t } = useTranslation();
-  const { palette } = useAppTheme();
   const { incomeTotal, costsTotal, savingsGoal, allowance } = useAllowance();
 
   const allowanceLabel = fmtR(allowance);
 
   return (
-    <View style={[styles.card, { backgroundColor: palette.card }]}>
+    <View style={styles.card}>
       <DerivationRow label={t('recurring.income')} amount={`+${fmtR(incomeTotal)}`} color="good" />
       <DerivationRow
         label={t('recurring.fixedCosts')}
@@ -82,8 +80,6 @@ export function DerivationCard() {
 
 const styles = StyleSheet.create({
   card: {
-    borderRadius: Radius.base,
-    padding: Spacing.four,
     gap: Spacing.three,
   },
   row: {

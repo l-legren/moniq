@@ -20,7 +20,7 @@ export default function SettingsScreen() {
   const noop = () => {};
 
   return (
-    <Screen edges={['top']}>
+    <Screen edges={['top']} background="flat">
       <SettingsHeader onBack={() => router.back()} />
 
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>

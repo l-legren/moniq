@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
 
 import { AppText } from '@/components/ui/text';
+import { WidgetCard } from '@/components/ui/widget-card';
 import { Radius, Spacing } from '@/constants/theme';
 import { useAppTheme } from '@/hooks/use-app-theme';
 import { fmtR } from '@/utils/money';
@@ -30,7 +31,7 @@ function SavedHeader({ caption, saved, goal }: SavedHeaderProps) {
         <AppText variant="sectionLabel" color="text3">
           {caption}
         </AppText>
-        <AppText variant="hero" color="accent2">
+        <AppText variant="amount" color="accent2">
           {savedLabel}
         </AppText>
       </View>
@@ -69,24 +70,21 @@ type SavedSummaryProps = {
 
 export function SavedSummary({ caption, saved, goal, savedPct, onTrack }: SavedSummaryProps) {
   const { t } = useTranslation();
-  const { palette } = useAppTheme();
 
   return (
-    <View style={[styles.card, { backgroundColor: palette.card }]}>
+    <WidgetCard contentStyle={styles.card}>
       <SavedHeader caption={caption} saved={saved} goal={goal} />
       <ProgressBar pct={savedPct} />
       <AppText variant="bodyMedium" color={onTrack ? 'good' : 'bad'}>
         {onTrack ? t('insights.onTrack') : t('insights.behind')}
       </AppText>
-    </View>
+    </WidgetCard>
   );
 }
 
 const styles = StyleSheet.create({
   card: {
-    borderRadius: Radius.base,
-    padding: Spacing.four,
-    gap: Spacing.three,
+    gap: Spacing.four,
   },
   headerRow: {
     flexDirection: 'row',

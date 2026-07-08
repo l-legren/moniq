@@ -1,56 +1,42 @@
-import Ionicons from '@expo/vector-icons/Ionicons';
-import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { useRouter } from 'expo-router';
+import { StyleSheet, View } from 'react-native';
 
 import { RecurringItemRow } from '@/components/recurring/recurring-item-row';
-import { Collapse } from '@/components/ui/collapse';
 import { Hairline } from '@/components/ui/hairline';
 import { AppText } from '@/components/ui/text';
+import { SeeMoreLink } from '@/components/ui/see-more-link';
+import { WidgetCard } from '@/components/ui/widget-card';
 import { Spacing } from '@/constants/theme';
-import { useAppTheme } from '@/hooks/use-app-theme';
 import { fmtR } from '@/utils/money';
 import type { RecurringItem, RecurringType } from '@/services/recurring.service';
+
+/** Widget cards preview at most this many rows; "See more" always links to the full list. */
+const PREVIEW_LIMIT = 3;
 
 type SectionHeaderProps = {
   title: string;
   totalLabel: string;
-  expanded: boolean;
-  onToggle: () => void;
 };
 
-function SectionHeader({ title, totalLabel, expanded, onToggle }: SectionHeaderProps) {
-  const { t } = useTranslation();
-  const { palette } = useAppTheme();
-
+function SectionHeader({ title, totalLabel }: SectionHeaderProps) {
   return (
-    <Pressable
-      onPress={onToggle}
-      accessibilityRole="button"
-      accessibilityState={{ expanded }}
-      accessibilityLabel={t(expanded ? 'recurring.collapseSection' : 'recurring.expandSection', {
-        section: title,
-      })}
-      style={styles.header}
-    >
-      <View style={styles.headerLeft}>
-        <Ionicons
-          name={expanded ? 'chevron-down' : 'chevron-forward'}
-          size={16}
-          color={palette.text3}
-        />
-        <AppText variant="sectionLabel" color="text3">
-          {title}
-        </AppText>
-      </View>
+    <View style={styles.header}>
+      <AppText variant="sectionLabel" color="text3">
+        {title}
+      </AppText>
       <AppText variant="mono" color="text2">
         {totalLabel}
       </AppText>
-    </Pressable>
+    </View>
   );
 }
 
-function RecurringList({ items, emptyLabel }: { items: RecurringItem[]; emptyLabel: string }) {
+type RecurringListProps = {
+  items: RecurringItem[];
+  emptyLabel: string;
+};
+
+function RecurringList({ items, emptyLabel }: RecurringListProps) {
   if (items.length === 0) {
     return (
       <AppText variant="caption" color="text3" style={styles.empty}>
@@ -60,8 +46,8 @@ function RecurringList({ items, emptyLabel }: { items: RecurringItem[]; emptyLab
   }
 
   return (
-    <View style={styles.list}>
-      {items.map((item, index) => (
+    <View>
+      {items.slice(0, PREVIEW_LIMIT).map((item, index) => (
         <View key={item.id}>
           {index > 0 && <Hairline style={styles.rowDivider} />}
           <RecurringItemRow item={item} />
@@ -71,7 +57,7 @@ function RecurringList({ items, emptyLabel }: { items: RecurringItem[]; emptyLab
   );
 }
 
-type Props = {
+type RecurringSectionProps = {
   title: string;
   total: number;
   items: RecurringItem[];
@@ -79,22 +65,19 @@ type Props = {
   emptyLabel: string;
 };
 
-export function RecurringSection({ title, total, items, type, emptyLabel }: Props) {
-  const [expanded, setExpanded] = useState(true);
+export function RecurringSection({ title, total, items, type, emptyLabel }: RecurringSectionProps) {
+  const router = useRouter();
   const totalLabel = `${type === 'income' ? '+' : '−'}${fmtR(total)}`;
 
   return (
-    <View>
-      <SectionHeader
-        title={title}
-        totalLabel={totalLabel}
-        expanded={expanded}
-        onToggle={() => setExpanded((value) => !value)}
+    <WidgetCard>
+      <SectionHeader title={title} totalLabel={totalLabel} />
+      <RecurringList items={items} emptyLabel={emptyLabel} />
+      <SeeMoreLink
+        section={title}
+        onPress={() => router.push({ pathname: '/detail', params: { source: type } })}
       />
-      <Collapse expanded={expanded}>
-        <RecurringList items={items} emptyLabel={emptyLabel} />
-      </Collapse>
-    </View>
+    </WidgetCard>
   );
 }
 
@@ -103,15 +86,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingVertical: Spacing.two,
-  },
-  headerLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: Spacing.two,
-  },
-  list: {
-    paddingTop: Spacing.one,
+    paddingBottom: Spacing.two,
   },
   rowDivider: {
     marginVertical: Spacing.half,

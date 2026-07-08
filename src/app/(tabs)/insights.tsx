@@ -60,7 +60,7 @@ export default function InsightsScreen() {
         />
 
         <InsightsChart title={view.chartTitle} footer={view.chartFooter} bars={view.bars} />
-        <CategoryBreakdown breakdown={view.breakdown} />
+        <CategoryBreakdown breakdown={view.breakdown} mode={mode} periodIndex={index} />
         <InsightsTips />
       </ScrollView>
     </Screen>
