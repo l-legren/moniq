@@ -69,10 +69,9 @@ type SavedSummaryProps = {
 
 export function SavedSummary({ caption, saved, goal, savedPct, onTrack }: SavedSummaryProps) {
   const { t } = useTranslation();
-  const { palette } = useAppTheme();
 
   return (
-    <View style={[styles.card, { backgroundColor: palette.card }]}>
+    <View style={[styles.card]}>
       <SavedHeader caption={caption} saved={saved} goal={goal} />
       <ProgressBar pct={savedPct} />
       <AppText variant="bodyMedium" color={onTrack ? 'good' : 'bad'}>
@@ -84,9 +83,7 @@ export function SavedSummary({ caption, saved, goal, savedPct, onTrack }: SavedS
 
 const styles = StyleSheet.create({
   card: {
-    borderRadius: Radius.base,
-    padding: Spacing.four,
-    gap: Spacing.three,
+    gap: Spacing.four,
   },
   headerRow: {
     flexDirection: 'row',

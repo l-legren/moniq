@@ -1,8 +1,11 @@
+import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
 
 import { Hairline } from '@/components/ui/hairline';
+import { SeeMoreLink } from '@/components/ui/see-more-link';
 import { AppText } from '@/components/ui/text';
+import { WidgetCard } from '@/components/ui/widget-card';
 import { CATEGORY_LABEL_KEYS } from '@/constants/categories';
 import { Spacing } from '@/constants/theme';
 import { useAllowance } from '@/hooks/use-allowance';
@@ -11,6 +14,9 @@ import { todayRemaining } from '@/services/allowance.service';
 import { todayISO } from '@/utils/date';
 import { expensesOn, sumAmount, type Expense } from '@/services/expenses.service';
 import { fmt } from '@/utils/money';
+
+/** Widget cards preview at most this many rows; "See more" always links to the full list. */
+const PREVIEW_LIMIT = 3;
 
 function BalanceHero({ remaining, dailyBudget }: { remaining: number; dailyBudget: number }) {
   const { t } = useTranslation();
@@ -81,15 +87,33 @@ function ActivityList({ expenses }: { expenses: Expense[] }) {
 
   return (
     <View style={styles.activityList}>
-      {expenses.map((expense) => (
+      {expenses.slice(0, PREVIEW_LIMIT).map((expense) => (
         <ActivityRow key={expense.id} expense={expense} />
       ))}
     </View>
   );
 }
 
-export function BalancePage() {
+function ActivityCard({ expenses }: { expenses: Expense[] }) {
   const { t } = useTranslation();
+  const router = useRouter();
+  const title = t('today.activity');
+
+  return (
+    <WidgetCard>
+      <AppText variant="sectionLabel" color="text3">
+        {title}
+      </AppText>
+      <ActivityList expenses={expenses} />
+      <SeeMoreLink
+        section={title}
+        onPress={() => router.push({ pathname: '/detail', params: { source: 'activity' } })}
+      />
+    </WidgetCard>
+  );
+}
+
+export function BalancePage() {
   const { data: expenses = [] } = useExpenses();
   const { dailyBudget } = useAllowance();
 
@@ -100,10 +124,7 @@ export function BalancePage() {
     <View style={styles.page}>
       <BalanceHero remaining={remaining} dailyBudget={dailyBudget} />
       <Hairline style={styles.divider} />
-      <AppText variant="sectionLabel" color="text3">
-        {t('today.activity')}
-      </AppText>
-      <ActivityList expenses={todays} />
+      <ActivityCard expenses={todays} />
     </View>
   );
 }

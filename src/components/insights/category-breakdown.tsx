@@ -1,13 +1,20 @@
+import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
 
+import { SeeMoreLink } from '@/components/ui/see-more-link';
 import { AppText } from '@/components/ui/text';
+import { WidgetCard } from '@/components/ui/widget-card';
 import { CATEGORY_LABEL_KEYS } from '@/constants/categories';
 import { Radius, Spacing } from '@/constants/theme';
 import { useAppTheme } from '@/hooks/use-app-theme';
+import type { InsightsMode } from '@/hooks/use-insights';
 import type { CategoryTotal } from '@/services/insights.service';
 import { fmtR } from '@/utils/money';
 import { percentOf } from '@/utils/percent';
+
+/** Widget cards preview at most this many rows; "See more" always links to the full list. */
+const PREVIEW_LIMIT = 3;
 
 type BreakdownRowProps = {
   row: CategoryTotal;
@@ -42,38 +49,49 @@ function BreakdownRow({ row, max }: BreakdownRowProps) {
 
 type CategoryBreakdownProps = {
   breakdown: CategoryTotal[];
+  mode: InsightsMode;
+  periodIndex: number;
 };
 
-export function CategoryBreakdown({ breakdown }: CategoryBreakdownProps) {
+export function CategoryBreakdown({ breakdown, mode, periodIndex }: CategoryBreakdownProps) {
   const { t } = useTranslation();
+  const router = useRouter();
   const max = breakdown.length > 0 ? breakdown[0].amount : 0;
+  const title = t('insights.whereItGoes');
 
   return (
-    <View style={styles.container}>
+    <WidgetCard>
       <AppText variant="sectionLabel" color="text3">
-        {t('insights.whereItGoes')}
+        {title}
       </AppText>
       {breakdown.length === 0 ? (
-        <AppText variant="caption" color="text3">
+        <AppText variant="caption" color="text3" style={styles.empty}>
           {t('insights.noData')}
         </AppText>
       ) : (
         <View style={styles.list}>
-          {breakdown.map((row) => (
+          {breakdown.slice(0, PREVIEW_LIMIT).map((row) => (
             <BreakdownRow key={row.category} row={row} max={max} />
           ))}
         </View>
       )}
-    </View>
+      <SeeMoreLink
+        section={title}
+        onPress={() =>
+          router.push({ pathname: '/breakdown', params: { mode, index: String(periodIndex) } })
+        }
+      />
+    </WidgetCard>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  list: {
+    marginTop: Spacing.three,
     gap: Spacing.three,
   },
-  list: {
-    gap: Spacing.three,
+  empty: {
+    marginTop: Spacing.three,
   },
   row: {
     gap: Spacing.two,

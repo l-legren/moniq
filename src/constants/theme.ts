@@ -1,5 +1,6 @@
 /**
- * Design tokens for moniq — the warm palette + type scale (`Palettes`, `Typography`, `FontFamily`).
+ * Design tokens for moniq — the pink-accented palette + gradient/card tokens + type scale
+ * (`Palettes`, `GradientGlow`, `CardShadow`, `Typography`, `FontFamily`).
  */
 
 import '@/global.css';
@@ -14,44 +15,88 @@ export type ThemeName = 'dark' | 'light';
 
 export const Palettes = {
   dark: {
-    bg: '#14110C',
-    card: '#1E1A14',
-    text: '#F4EEE2',
-    text2: '#B5AFA0',
-    text3: '#7A726A',
-    hairline: 'rgba(245,235,220,0.10)',
-    accent: '#FF7A59',
-    accentLight: 'rgba(255,122,89,0.14)',
+    bg: '#1A1518',
+    card: '#251F24',
+    /** Translucent widget-card fill, meant to sit over `bgGradient` with a blur. */
+    cardTrans: 'rgba(58,50,56,0.45)',
+    text: '#F1EFF0',
+    text2: '#ABA6AA',
+    text3: '#7A747A',
+    hairline: 'rgba(240,225,235,0.08)',
+    accent: '#FF4FA3',
+    accentLight: 'rgba(255,79,163,0.16)',
     accent2: '#5FA8E8',
     accent2Light: 'rgba(95,168,232,0.14)',
     good: '#5FBF86',
     goodLight: 'rgba(95,191,134,0.14)',
     bad: '#F2637A',
-    neutralSel: 'rgba(245,235,220,0.09)',
-    scrim: 'rgba(8,6,4,0.5)',
+    neutralSel: 'rgba(240,225,235,0.08)',
+    scrim: 'rgba(6,5,7,0.5)',
     /** Text placed on top of an accent/good/bad fill (e.g. filled buttons). */
     onAccent: '#1A140A',
     /** Radial backdrop stops (near → far), for a LinearGradient. */
-    backdrop: ['#2a2520', '#171410', '#100d0a'],
+    backdrop: ['#2e262b', '#1c171b', '#141013'],
   },
   light: {
-    bg: '#F6F1E8',
+    bg: '#FBF1F4',
     card: '#FFFFFF',
-    text: '#2C2318',
-    text2: '#8B7F6D',
-    text3: '#A89D89',
-    hairline: 'rgba(60,45,20,0.10)',
-    accent: '#E85C3C',
-    accentLight: 'rgba(232,92,60,0.12)',
+    cardTrans: 'rgba(255,255,255,0.60)',
+    text: '#2A2126',
+    text2: '#8A7E85',
+    text3: '#B2A4AB',
+    hairline: 'rgba(60,30,45,0.09)',
+    accent: '#D91E85',
+    accentLight: 'rgba(217,30,133,0.12)',
     accent2: '#2E7BC4',
     accent2Light: 'rgba(46,123,196,0.12)',
     good: '#3E9A64',
     goodLight: 'rgba(62,154,100,0.14)',
     bad: '#D94F63',
-    neutralSel: 'rgba(60,45,20,0.07)',
-    scrim: 'rgba(40,30,15,0.25)',
+    neutralSel: 'rgba(60,30,45,0.06)',
+    scrim: 'rgba(40,15,30,0.25)',
     onAccent: '#1A140A',
-    backdrop: ['#F0E8D8', '#E7DCC8', '#DED2BB'],
+    backdrop: ['#F3D9E5', '#EBC9DA', '#E3BCD0'],
+  },
+} as const;
+
+/**
+ * Background glow — 3 stacked radial layers + a linear base, from the redesign mockup.
+ * Consumed by `GradientBackground` (SVG `RadialGradient`s + `expo-linear-gradient`).
+ */
+export const GradientGlow = {
+  dark: {
+    // Pink glow concentrated near the top; the linear base does the actual darkening toward
+    // the bottom, so the last radial stays faint to avoid a visible pink patch down there.
+    radials: [
+      { cx: '12%', cy: '0%', rx: '95%', ry: '55%', color: 'rgba(255,79,163,0.18)' },
+      { cx: '100%', cy: '18%', rx: '85%', ry: '50%', color: 'rgba(95,168,232,0.12)' },
+      { cx: '50%', cy: '100%', rx: '120%', ry: '80%', color: 'rgba(255,79,163,0.07)' },
+    ],
+    linear: ['#1E181C', '#1A1518', '#161215'],
+  },
+  light: {
+    radials: [
+      { cx: '12%', cy: '0%', rx: '95%', ry: '55%', color: 'rgba(217,30,133,0.14)' },
+      { cx: '100%', cy: '18%', rx: '85%', ry: '50%', color: 'rgba(46,123,196,0.11)' },
+      { cx: '50%', cy: '100%', rx: '120%', ry: '80%', color: 'rgba(217,30,133,0.06)' },
+    ],
+    linear: ['#FDF6F9', '#FBF1F4', '#F6E9EF'],
+  },
+} as const;
+
+/** Card drop shadow for the frosted widget-card tier (iOS `shadow*` props). */
+export const CardShadow = {
+  dark: {
+    shadowColor: '#000000',
+    shadowOpacity: 0.25,
+    shadowRadius: 2,
+    shadowOffset: { width: 0, height: 1 },
+  },
+  light: {
+    shadowColor: '#783050',
+    shadowOpacity: 0.06,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 2 },
   },
 } as const;
 
@@ -120,9 +165,13 @@ export const Typography = {
 
 export type TypographyVariant = keyof typeof Typography;
 
-/** Flat, minimal — 4px everywhere; sheets override with a large top radius. */
+/**
+ * `base` (4px) is the flat control/chip tier (toggles, category rows, inputs, buttons).
+ * `card` (20px) is the frosted widget-card tier (income/costs/insights containers).
+ */
 export const Radius = {
   base: 4,
+  card: 20,
   sheet: 40,
   pill: 999,
 } as const;

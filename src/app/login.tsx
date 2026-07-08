@@ -32,7 +32,7 @@ export default function LoginScreen() {
   };
 
   return (
-    <Screen style={styles.screen}>
+    <Screen style={styles.screen} background="flat">
       <View style={styles.form}>
         <AppText variant="title">{t('auth.title')}</AppText>
 
