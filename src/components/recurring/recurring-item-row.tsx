@@ -20,7 +20,6 @@ export function frequencyLabel(frequency: Frequency, t: TFunction): string {
 
 type RecurringItemRowProps = {
   item: RecurringItem;
-  /** Recurring items aren't categorized today, so no source passes this yet — kept for parity with expenses. */
   icon?: IoniconName;
 };
 

@@ -2,6 +2,11 @@
  * Business layer — recurring items (income + fixed expenses). Domain model + mapper + rules.
  */
 
+import {
+  INCOME_CATEGORY_IDS,
+  RECURRING_EXPENSE_CATEGORY_IDS,
+  type RecurringCategoryId,
+} from '@/constants/categories';
 import { getRecurringRows, saveRecurringRows, type RecurringRow } from '@/data/recurring.data';
 
 import { makeId } from '@/utils/id';
@@ -21,10 +26,22 @@ export type RecurringItem = {
   frequency: Frequency;
   /** Normalised to a monthly figure (yearly ÷ 12) — this is what the allowance uses. */
   monthlyAmount: number;
+  /** Optional category — the valid id set depends on `type` (income vs expense). */
+  category?: RecurringCategoryId;
 };
 
 function toType(value: string): RecurringType {
   return value === 'income' ? 'income' : 'expense';
+}
+
+function toCategory(
+  type: RecurringType,
+  value: string | undefined
+): RecurringCategoryId | undefined {
+  if (!value) return undefined;
+  const ids: readonly string[] =
+    type === 'income' ? INCOME_CATEGORY_IDS : RECURRING_EXPENSE_CATEGORY_IDS;
+  return ids.includes(value) ? (value as RecurringCategoryId) : undefined;
 }
 
 function toCadence(value: string): Cadence {
@@ -42,13 +59,16 @@ export function mapRowToRecurring(row: RecurringRow): RecurringItem {
       ? { kind: 'term', cadence, endDate: row.frequency.endDate }
       : { kind: 'perpetual', cadence };
 
+  const type = toType(row.type);
+
   return {
     id: row.id,
-    type: toType(row.type),
+    type,
     name: row.name,
     amount: row.amount,
     frequency,
     monthlyAmount: monthlyAmountOf(row.amount, cadence),
+    category: toCategory(type, row.category),
   };
 }
 
@@ -62,6 +82,7 @@ export type NewRecurring = {
   name: string;
   amount: number;
   frequency: Frequency;
+  category?: RecurringCategoryId;
 };
 
 export async function addRecurring(input: NewRecurring): Promise<RecurringItem> {
@@ -71,6 +92,7 @@ export async function addRecurring(input: NewRecurring): Promise<RecurringItem> 
     name: input.name.trim(),
     amount: input.amount,
     frequency: input.frequency,
+    category: input.category,
   };
   const rows = await getRecurringRows();
   await saveRecurringRows([row, ...rows]);

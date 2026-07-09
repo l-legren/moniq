@@ -6,6 +6,7 @@ import { Hairline } from '@/components/ui/hairline';
 import { AppText } from '@/components/ui/text';
 import { SeeMoreLink } from '@/components/ui/see-more-link';
 import { WidgetCard } from '@/components/ui/widget-card';
+import { recurringCategoryIcon } from '@/constants/categories';
 import { Spacing } from '@/constants/theme';
 import { fmtR } from '@/utils/money';
 import type { RecurringItem, RecurringType } from '@/services/recurring.service';
@@ -50,7 +51,14 @@ function RecurringList({ items, emptyLabel }: RecurringListProps) {
       {items.slice(0, PREVIEW_LIMIT).map((item, index) => (
         <View key={item.id}>
           {index > 0 && <Hairline style={styles.rowDivider} />}
-          <RecurringItemRow item={item} />
+          <RecurringItemRow
+            item={item}
+            icon={
+              item.category
+                ? recurringCategoryIcon(item.type === 'income', item.category)
+                : undefined
+            }
+          />
         </View>
       ))}
     </View>

@@ -12,7 +12,7 @@ import { Hairline } from '@/components/ui/hairline';
 import { Screen } from '@/components/ui/screen';
 import { AppText } from '@/components/ui/text';
 import { WidgetCard } from '@/components/ui/widget-card';
-import { CATEGORY_ICONS, CATEGORY_LABEL_KEYS } from '@/constants/categories';
+import { CATEGORY_ICONS, CATEGORY_LABEL_KEYS, recurringCategoryIcon } from '@/constants/categories';
 import { Spacing } from '@/constants/theme';
 import { useDeleteExpense, useExpenses } from '@/hooks/use-expenses';
 import { useDeleteRecurring, useRecurring } from '@/hooks/use-recurring';
@@ -52,6 +52,7 @@ function buildRecurringRows(
       amount,
       amountColor: isIncome ? 'good' : 'text',
       accessibilityLabel: t('recurring.itemRow', { name: item.name, subtitle: secondary, amount }),
+      icon: item.category ? recurringCategoryIcon(isIncome, item.category) : undefined,
       onDelete: () => onDelete(item.id),
     };
   });

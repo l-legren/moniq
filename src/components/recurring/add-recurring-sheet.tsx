@@ -6,10 +6,22 @@ import { MonthPicker } from '@/components/recurring/month-picker';
 import { SavingsField } from '@/components/recurring/savings-field';
 import { SheetHeader } from '@/components/recurring/sheet-header';
 import { Button } from '@/components/ui/button';
+import { CategoryGrid } from '@/components/ui/category-grid';
 import { PillToggle } from '@/components/ui/pill-toggle';
 import { Sheet } from '@/components/ui/sheet';
 import { TextField } from '@/components/ui/text-field';
 import { AppText } from '@/components/ui/text';
+import {
+  INCOME_CATEGORY_ICONS,
+  INCOME_CATEGORY_IDS,
+  INCOME_CATEGORY_LABEL_KEYS,
+  RECURRING_EXPENSE_CATEGORY_ICONS,
+  RECURRING_EXPENSE_CATEGORY_IDS,
+  RECURRING_EXPENSE_CATEGORY_LABEL_KEYS,
+  type IncomeCategoryId,
+  type RecurringCategoryId,
+  type RecurringExpenseCategoryId,
+} from '@/constants/categories';
 import { Spacing } from '@/constants/theme';
 import { useAllowance } from '@/hooks/use-allowance';
 import { useAddRecurring } from '@/hooks/use-recurring';
@@ -29,6 +41,18 @@ function defaultLastPayment(): string {
   const now = new Date();
   return `${now.getFullYear() + 1}-${String(now.getMonth() + 1).padStart(2, '0')}`;
 }
+
+const INCOME_CATEGORY_FIELDS = {
+  ids: INCOME_CATEGORY_IDS,
+  labelKeys: INCOME_CATEGORY_LABEL_KEYS,
+  icons: INCOME_CATEGORY_ICONS,
+};
+
+const EXPENSE_CATEGORY_FIELDS = {
+  ids: RECURRING_EXPENSE_CATEGORY_IDS,
+  labelKeys: RECURRING_EXPENSE_CATEGORY_LABEL_KEYS,
+  icons: RECURRING_EXPENSE_CATEGORY_ICONS,
+};
 
 type FieldProps = {
   label: string;
@@ -66,6 +90,7 @@ export function AddRecurringSheet({
   const [type, setType] = useState<RecurringType>(initialType);
   const [name, setName] = useState('');
   const [amount, setAmount] = useState('');
+  const [category, setCategory] = useState<RecurringCategoryId | null>(null);
   const [cadence, setCadence] = useState<Cadence>('monthly');
   const [frequencyKind, setFrequencyKind] = useState<FrequencyKind>('perpetual');
   const [lastPayment, setLastPayment] = useState(defaultLastPayment);
@@ -77,6 +102,8 @@ export function AddRecurringSheet({
     setSavingsDraft(savingsGoal);
   }, [savingsGoal]);
 
+  const isIncome = type === 'income';
+
   const amountValue = parseFloat(amount) || 0;
   const draftMonthly = monthlyAmountOf(amountValue, cadence);
   const previewAllowance = computeAllowance({
@@ -84,16 +111,21 @@ export function AddRecurringSheet({
     costsTotal: costsTotal + (type === 'expense' ? draftMonthly : 0),
     savingsGoal: savingsDraft,
   });
-  const isIncome = type === 'income';
   const canConfirm = name.trim().length > 0 && amountValue > 0;
 
   const resetForm = () => {
     setType(initialType);
     setName('');
     setAmount('');
+    setCategory(null);
     setCadence('monthly');
     setFrequencyKind('perpetual');
     setLastPayment(defaultLastPayment());
+  };
+
+  const handleTypeChange = (next: RecurringType) => {
+    setType(next);
+    setCategory(null);
   };
 
   const handleClose = () => {
@@ -107,7 +139,13 @@ export function AddRecurringSheet({
       frequencyKind === 'term'
         ? { kind: 'term', cadence, endDate: lastPayment }
         : { kind: 'perpetual', cadence };
-    addRecurring.mutate({ type, name: name.trim(), amount: amountValue, frequency });
+    addRecurring.mutate({
+      type,
+      name: name.trim(),
+      amount: amountValue,
+      frequency,
+      category: category ?? undefined,
+    });
     resetForm();
     onClose();
   };
@@ -127,9 +165,25 @@ export function AddRecurringSheet({
             { value: 'income', label: t('recurring.typeIncome') },
           ]}
           value={type}
-          onChange={setType}
+          onChange={handleTypeChange}
           tone={isIncome ? 'good' : 'accent'}
         />
+
+        <Field label={t('today.category')}>
+          {isIncome ? (
+            <CategoryGrid
+              {...INCOME_CATEGORY_FIELDS}
+              category={category as IncomeCategoryId | null}
+              onSelect={setCategory}
+            />
+          ) : (
+            <CategoryGrid
+              {...EXPENSE_CATEGORY_FIELDS}
+              category={category as RecurringExpenseCategoryId | null}
+              onSelect={setCategory}
+            />
+          )}
+        </Field>
 
         <TextField
           label={t('recurring.name')}

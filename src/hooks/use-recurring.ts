@@ -20,6 +20,7 @@ function buildOptimisticRecurring(input: NewRecurring): RecurringItem {
     amount: input.amount,
     frequency: input.frequency,
     monthlyAmount: monthlyAmountOf(input.amount, input.frequency.cadence),
+    category: input.category,
   };
 }
 

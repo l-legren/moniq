@@ -41,3 +41,88 @@ export const CATEGORY_ICONS: Record<CategoryId, IoniconName> = {
   transport: 'car-outline',
   other: 'ellipsis-horizontal-circle-outline',
 };
+
+/** Categories for recurring income items. */
+export const INCOME_CATEGORY_IDS = [
+  'salary',
+  'freelance',
+  'sideBusiness',
+  'rental',
+  'investments',
+  'gifts',
+  'other',
+] as const;
+
+export type IncomeCategoryId = (typeof INCOME_CATEGORY_IDS)[number];
+
+export const INCOME_CATEGORY_LABEL_KEYS: Record<IncomeCategoryId, string> = {
+  salary: 'categories.income.salary',
+  freelance: 'categories.income.freelance',
+  sideBusiness: 'categories.income.sideBusiness',
+  rental: 'categories.income.rental',
+  investments: 'categories.income.investments',
+  gifts: 'categories.income.gifts',
+  other: 'categories.other',
+};
+
+export const INCOME_CATEGORY_ICONS: Record<IncomeCategoryId, IoniconName> = {
+  salary: 'cash-outline',
+  freelance: 'briefcase-outline',
+  sideBusiness: 'rocket-outline',
+  rental: 'home-outline',
+  investments: 'trending-up-outline',
+  gifts: 'gift-outline',
+  other: 'ellipsis-horizontal-circle-outline',
+};
+
+/** Categories for recurring fixed-cost items. */
+export const RECURRING_EXPENSE_CATEGORY_IDS = [
+  'subscriptions',
+  'fitness',
+  'rent',
+  'car',
+  'installments',
+  'other',
+] as const;
+
+export type RecurringExpenseCategoryId = (typeof RECURRING_EXPENSE_CATEGORY_IDS)[number];
+
+export const RECURRING_EXPENSE_CATEGORY_LABEL_KEYS: Record<RecurringExpenseCategoryId, string> = {
+  subscriptions: 'categories.recurringExpense.subscriptions',
+  fitness: 'categories.recurringExpense.fitness',
+  rent: 'categories.recurringExpense.rent',
+  car: 'categories.recurringExpense.car',
+  installments: 'categories.recurringExpense.installments',
+  other: 'categories.other',
+};
+
+export const RECURRING_EXPENSE_CATEGORY_ICONS: Record<RecurringExpenseCategoryId, IoniconName> = {
+  subscriptions: 'repeat-outline',
+  fitness: 'barbell-outline',
+  rent: 'key-outline',
+  car: 'car-outline',
+  installments: 'card-outline',
+  other: 'ellipsis-horizontal-circle-outline',
+};
+
+export type RecurringCategoryId = IncomeCategoryId | RecurringExpenseCategoryId;
+
+/** Icon for a recurring item's category — the set differs between income and fixed costs. */
+export function recurringCategoryIcon(
+  isIncome: boolean,
+  category: RecurringCategoryId
+): IoniconName {
+  return isIncome
+    ? INCOME_CATEGORY_ICONS[category as IncomeCategoryId]
+    : RECURRING_EXPENSE_CATEGORY_ICONS[category as RecurringExpenseCategoryId];
+}
+
+/** i18n label key for a recurring item's category — the set differs between income and fixed costs. */
+export function recurringCategoryLabelKey(
+  isIncome: boolean,
+  category: RecurringCategoryId
+): string {
+  return isIncome
+    ? INCOME_CATEGORY_LABEL_KEYS[category as IncomeCategoryId]
+    : RECURRING_EXPENSE_CATEGORY_LABEL_KEYS[category as RecurringExpenseCategoryId];
+}

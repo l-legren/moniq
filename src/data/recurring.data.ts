@@ -13,8 +13,7 @@ import { getJSON, setJSON, STORAGE_KEYS } from './storage';
  * `endDate` is `YYYY-MM`.
  */
 export type RecurringFrequencyRow =
-  | { kind: 'perpetual'; cadence: string }
-  | { kind: 'term'; cadence: string; endDate: string };
+  { kind: 'perpetual'; cadence: string } | { kind: 'term'; cadence: string; endDate: string };
 
 export type RecurringRow = {
   id: string;
@@ -22,6 +21,8 @@ export type RecurringRow = {
   name: string;
   amount: number;
   frequency: RecurringFrequencyRow;
+  /** Optional category id — the valid set depends on `type` (income vs expense), validated in the service. */
+  category?: string;
 };
 
 export async function getRecurringRows(): Promise<RecurringRow[]> {

@@ -4,13 +4,18 @@ import { useTranslation } from 'react-i18next';
 import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, View } from 'react-native';
 import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
 
-import { CategoryGrid } from '@/components/today/category-grid';
 import { DetailHeader } from '@/components/detail/detail-header';
 import { Button } from '@/components/ui/button';
+import { CategoryGrid } from '@/components/ui/category-grid';
 import { Screen } from '@/components/ui/screen';
 import { AppText } from '@/components/ui/text';
 import { TextField } from '@/components/ui/text-field';
-import { type CategoryId } from '@/constants/categories';
+import {
+  CATEGORY_ICONS,
+  CATEGORY_IDS,
+  CATEGORY_LABEL_KEYS,
+  type CategoryId,
+} from '@/constants/categories';
 import { Spacing } from '@/constants/theme';
 import { useAddExpense } from '@/hooks/use-expenses';
 
@@ -71,7 +76,13 @@ export default function AddExpenseScreen() {
           </AppText>
 
           <View style={styles.gridBlock}>
-            <CategoryGrid category={category} onSelect={handleSelectCategory} />
+            <CategoryGrid
+              ids={CATEGORY_IDS}
+              category={category}
+              labelKeys={CATEGORY_LABEL_KEYS}
+              icons={CATEGORY_ICONS}
+              onSelect={handleSelectCategory}
+            />
           </View>
 
           {isOther && (

@@ -3,28 +3,30 @@ import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, View } from 'react-native';
 
 import { AppText } from '@/components/ui/text';
-import {
-  CATEGORY_ICONS,
-  CATEGORY_IDS,
-  CATEGORY_LABEL_KEYS,
-  type CategoryId,
-} from '@/constants/categories';
+import { type IoniconName } from '@/constants/categories';
 import { Spacing } from '@/constants/theme';
 import { useAppTheme } from '@/hooks/use-app-theme';
 
 const TILE_ICON_SIZE = 26;
 const TILE_BADGE_SIZE = 52;
 
-type CategoryTileProps = {
-  id: CategoryId;
+type CategoryTileProps<T extends string> = {
+  id: T;
+  label: string;
+  icon: IoniconName;
   selected: boolean;
-  onSelect: (id: CategoryId) => void;
+  onSelect: (id: T) => void;
 };
 
-function CategoryTile({ id, selected, onSelect }: CategoryTileProps) {
+function CategoryTile<T extends string>({
+  id,
+  label,
+  icon,
+  selected,
+  onSelect,
+}: CategoryTileProps<T>) {
   const { t } = useTranslation();
   const { palette } = useAppTheme();
-  const label = t(CATEGORY_LABEL_KEYS[id]);
 
   return (
     <Pressable
@@ -46,7 +48,7 @@ function CategoryTile({ id, selected, onSelect }: CategoryTileProps) {
         ]}
       >
         <Ionicons
-          name={CATEGORY_ICONS[id]}
+          name={icon}
           size={TILE_ICON_SIZE}
           color={selected ? palette.accent : palette.text2}
         />
@@ -63,17 +65,35 @@ function CategoryTile({ id, selected, onSelect }: CategoryTileProps) {
   );
 }
 
-type CategoryGridProps = {
-  category: CategoryId | null;
-  onSelect: (id: CategoryId) => void;
+export type CategoryGridProps<T extends string> = {
+  ids: readonly T[];
+  category: T | null;
+  labelKeys: Record<T, string>;
+  icons: Record<T, IoniconName>;
+  onSelect: (id: T) => void;
 };
 
-/** Grid of icon tiles for picking an expense category — the icon set is shared app-wide via `CATEGORY_ICONS`. */
-export function CategoryGrid({ category, onSelect }: CategoryGridProps) {
+/** Grid of icon tiles for picking a category from any fixed id set (expense, income, recurring cost…). */
+export function CategoryGrid<T extends string>({
+  ids,
+  category,
+  labelKeys,
+  icons,
+  onSelect,
+}: CategoryGridProps<T>) {
+  const { t } = useTranslation();
+
   return (
     <View style={styles.grid}>
-      {CATEGORY_IDS.map((id) => (
-        <CategoryTile key={id} id={id} selected={id === category} onSelect={onSelect} />
+      {ids.map((id) => (
+        <CategoryTile
+          key={id}
+          id={id}
+          label={t(labelKeys[id])}
+          icon={icons[id]}
+          selected={id === category}
+          onSelect={onSelect}
+        />
       ))}
     </View>
   );

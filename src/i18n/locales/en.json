@@ -22,7 +22,22 @@
     "restaurants": "Restaurants",
     "clothing": "Clothing",
     "transport": "Transport",
-    "other": "Other"
+    "other": "Other",
+    "income": {
+      "salary": "Salary",
+      "freelance": "Freelance",
+      "sideBusiness": "Side business",
+      "rental": "Rental",
+      "investments": "Investments",
+      "gifts": "Gifts"
+    },
+    "recurringExpense": {
+      "subscriptions": "Subscriptions",
+      "fitness": "Fitness",
+      "rent": "Rent",
+      "car": "Car",
+      "installments": "Installments"
+    }
   },
   "today": {
     "addExpense": "Add expense",
