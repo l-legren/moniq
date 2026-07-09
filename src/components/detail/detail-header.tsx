@@ -6,6 +6,9 @@ import { AppText } from '@/components/ui/text';
 import { Radius, Spacing } from '@/constants/theme';
 import { useAppTheme } from '@/hooks/use-app-theme';
 
+/** Screens presented as a Stack modal sit closer to the top by default and need extra clearance. */
+type HeaderVariant = 'push' | 'modal';
+
 type HeaderIconButtonProps = {
   icon: 'chevron-back' | 'add';
   onPress: () => void;
@@ -24,7 +27,7 @@ function HeaderIconButton({ icon, onPress, accessibilityLabel }: HeaderIconButto
         styles.iconButton,
         {
           backgroundColor: palette.card,
-          borderColor: palette.hairline,
+          borderColor: palette.text3,
           opacity: pressed ? 0.85 : 1,
         },
       ]}
@@ -39,13 +42,15 @@ type DetailHeaderProps = {
   onBack: () => void;
   /** Only present for the income/costs sources — Detail's own add entry point. */
   onAdd?: () => void;
+  /** Defaults to `'push'`. Pass `'modal'` for screens registered with `presentation: 'modal'`. */
+  variant?: HeaderVariant;
 };
 
-export function DetailHeader({ title, onBack, onAdd }: DetailHeaderProps) {
+export function DetailHeader({ title, onBack, onAdd, variant = 'push' }: DetailHeaderProps) {
   const { t } = useTranslation();
 
   return (
-    <View style={styles.row}>
+    <View style={[styles.row, variant === 'modal' && styles.rowModal]}>
       <HeaderIconButton
         icon="chevron-back"
         onPress={onBack}
@@ -75,6 +80,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.four,
     paddingTop: Spacing.two,
     paddingBottom: Spacing.three,
+  },
+  rowModal: {
+    paddingTop: Spacing.four,
   },
   title: {
     flex: 1,

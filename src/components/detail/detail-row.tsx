@@ -1,6 +1,9 @@
 import { StyleSheet, View } from 'react-native';
 
+import { RowDeleteButton } from '@/components/ui/row-delete-button';
+import { RowIcon } from '@/components/ui/row-icon';
 import { AppText } from '@/components/ui/text';
+import { type IoniconName } from '@/constants/categories';
 import { Spacing, type PaletteColor } from '@/constants/theme';
 
 export type DetailRowData = {
@@ -10,6 +13,10 @@ export type DetailRowData = {
   amount: string;
   amountColor: PaletteColor;
   accessibilityLabel: string;
+  /** Optional leading icon (e.g. the row's expense category). */
+  icon?: IoniconName;
+  /** Present when the row can be deleted — renders a trailing trash icon. */
+  onDelete?: () => void;
 };
 
 /**
@@ -23,20 +30,26 @@ export function DetailRow({
   amount,
   amountColor,
   accessibilityLabel,
+  icon,
+  onDelete,
 }: DetailRowData) {
   return (
-    <View accessible accessibilityLabel={accessibilityLabel} style={styles.row}>
-      <View importantForAccessibility="no-hide-descendants">
-        <AppText variant="bodyMedium">{primary}</AppText>
-        {secondary ? (
-          <AppText variant="small" color="text3">
-            {secondary}
-          </AppText>
-        ) : null}
+    <View style={styles.row}>
+      {icon && <RowIcon name={icon} />}
+      <View accessible accessibilityLabel={accessibilityLabel} style={styles.body}>
+        <View importantForAccessibility="no-hide-descendants">
+          <AppText variant="bodyMedium">{primary}</AppText>
+          {secondary ? (
+            <AppText variant="small" color="text3">
+              {secondary}
+            </AppText>
+          ) : null}
+        </View>
+        <AppText variant="mono" color={amountColor} importantForAccessibility="no">
+          {amount}
+        </AppText>
       </View>
-      <AppText variant="mono" color={amountColor} importantForAccessibility="no">
-        {amount}
-      </AppText>
+      {onDelete && <RowDeleteButton itemName={primary} onConfirm={onDelete} />}
     </View>
   );
 }
@@ -45,7 +58,12 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
     paddingVertical: Spacing.three,
+  },
+  body: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
 });

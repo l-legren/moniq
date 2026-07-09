@@ -2,7 +2,9 @@ import type { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
 
+import { RowIcon } from '@/components/ui/row-icon';
 import { AppText } from '@/components/ui/text';
+import { type IoniconName } from '@/constants/categories';
 import { Spacing } from '@/constants/theme';
 import { formatMonthYear } from '@/utils/date';
 import { fmtR } from '@/utils/money';
@@ -16,7 +18,13 @@ export function frequencyLabel(frequency: Frequency, t: TFunction): string {
   return frequency.cadence === 'yearly' ? t('recurring.yearly') : t('recurring.monthly');
 }
 
-export function RecurringItemRow({ item }: { item: RecurringItem }) {
+type RecurringItemRowProps = {
+  item: RecurringItem;
+  /** Recurring items aren't categorized today, so no source passes this yet — kept for parity with expenses. */
+  icon?: IoniconName;
+};
+
+export function RecurringItemRow({ item, icon }: RecurringItemRowProps) {
   const { t } = useTranslation();
   const isIncome = item.type === 'income';
   const subtitle = frequencyLabel(item.frequency, t);
@@ -28,15 +36,18 @@ export function RecurringItemRow({ item }: { item: RecurringItem }) {
       accessibilityLabel={t('recurring.itemRow', { name: item.name, subtitle, amount })}
       style={styles.row}
     >
-      <View importantForAccessibility="no-hide-descendants">
-        <AppText>{item.name}</AppText>
-        <AppText variant="small" color="text3">
-          {subtitle}
+      {icon && <RowIcon name={icon} />}
+      <View style={styles.body} importantForAccessibility="no-hide-descendants">
+        <View>
+          <AppText>{item.name}</AppText>
+          <AppText variant="small" color="text3">
+            {subtitle}
+          </AppText>
+        </View>
+        <AppText variant="mono" color={isIncome ? 'good' : 'text'}>
+          {amount}
         </AppText>
       </View>
-      <AppText variant="mono" color={isIncome ? 'good' : 'text'} importantForAccessibility="no">
-        {amount}
-      </AppText>
     </View>
   );
 }
@@ -45,7 +56,12 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
     paddingVertical: Spacing.two,
+  },
+  body: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
 });

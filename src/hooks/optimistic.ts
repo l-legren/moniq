@@ -1,6 +1,6 @@
 /**
- * Small helpers for the "optimistically prepend to a cached list, roll back on error" pattern shared
- * by the add-expense / add-recurring mutations. Keeps the mutation hooks flat and readable.
+ * Small helpers for the "optimistically update a cached list, roll back on error" pattern shared
+ * by the add/delete expense / recurring mutations. Keeps the mutation hooks flat and readable.
  */
 
 import type { QueryClient, QueryKey } from '@tanstack/react-query';
@@ -16,6 +16,18 @@ export async function prependOptimistic<T>(
   await client.cancelQueries({ queryKey: key });
   const previous = client.getQueryData<T[]>(key);
   client.setQueryData<T[]>(key, (old = []) => [item, ...old]);
+  return { previous };
+}
+
+/** Cancel in-flight fetches, snapshot the list, and drop the item matching `id`. */
+export async function removeOptimistic<T extends { id: string }>(
+  client: QueryClient,
+  key: QueryKey,
+  id: string
+): Promise<ListSnapshot<T>> {
+  await client.cancelQueries({ queryKey: key });
+  const previous = client.getQueryData<T[]>(key);
+  client.setQueryData<T[]>(key, (old = []) => old.filter((item) => item.id !== id));
   return { previous };
 }
 

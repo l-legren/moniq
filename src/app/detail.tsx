@@ -12,10 +12,10 @@ import { Hairline } from '@/components/ui/hairline';
 import { Screen } from '@/components/ui/screen';
 import { AppText } from '@/components/ui/text';
 import { WidgetCard } from '@/components/ui/widget-card';
-import { CATEGORY_LABEL_KEYS } from '@/constants/categories';
+import { CATEGORY_ICONS, CATEGORY_LABEL_KEYS } from '@/constants/categories';
 import { Spacing } from '@/constants/theme';
-import { useExpenses } from '@/hooks/use-expenses';
-import { useRecurring } from '@/hooks/use-recurring';
+import { useDeleteExpense, useExpenses } from '@/hooks/use-expenses';
+import { useDeleteRecurring, useRecurring } from '@/hooks/use-recurring';
 import { expensesOn, type Expense } from '@/services/expenses.service';
 import type { RecurringItem, RecurringType } from '@/services/recurring.service';
 import { todayISO } from '@/utils/date';
@@ -36,7 +36,11 @@ function detailEmptyLabel(source: DetailSource, t: TFunction): string {
   return t('today.noActivity');
 }
 
-function buildRecurringRows(items: RecurringItem[], t: TFunction): DetailRowData[] {
+function buildRecurringRows(
+  items: RecurringItem[],
+  t: TFunction,
+  onDelete: (id: string) => void
+): DetailRowData[] {
   return items.map((item) => {
     const isIncome = item.type === 'income';
     const secondary = frequencyLabel(item.frequency, t);
@@ -48,13 +52,19 @@ function buildRecurringRows(items: RecurringItem[], t: TFunction): DetailRowData
       amount,
       amountColor: isIncome ? 'good' : 'text',
       accessibilityLabel: t('recurring.itemRow', { name: item.name, subtitle: secondary, amount }),
+      onDelete: () => onDelete(item.id),
     };
   });
 }
 
-function buildActivityRows(expenses: Expense[], t: TFunction): DetailRowData[] {
+function buildActivityRows(
+  expenses: Expense[],
+  t: TFunction,
+  onDelete: (id: string) => void
+): DetailRowData[] {
   return expenses.map((expense) => {
-    const label = t(CATEGORY_LABEL_KEYS[expense.category]);
+    const categoryLabel = t(CATEGORY_LABEL_KEYS[expense.category]);
+    const label = expense.note?.trim() || categoryLabel;
     const amount = `−${fmt(expense.amount)}`;
     return {
       id: expense.id,
@@ -63,6 +73,8 @@ function buildActivityRows(expenses: Expense[], t: TFunction): DetailRowData[] {
       amount,
       amountColor: 'text',
       accessibilityLabel: t('today.expenseRow', { category: label, time: expense.time, amount }),
+      icon: CATEGORY_ICONS[expense.category],
+      onDelete: () => onDelete(expense.id),
     };
   });
 }
@@ -73,15 +85,18 @@ export default function DetailScreen() {
   const { source } = useLocalSearchParams<{ source: DetailSource }>();
   const { data: recurring = [] } = useRecurring();
   const { data: expenses = [] } = useExpenses();
+  const deleteRecurring = useDeleteRecurring();
+  const deleteExpense = useDeleteExpense();
   const [sheetOpen, setSheetOpen] = useState(false);
 
   const isRecurringSource = source === 'income' || source === 'expense';
   const rows = isRecurringSource
     ? buildRecurringRows(
         recurring.filter((item) => item.type === source),
-        t
+        t,
+        (id) => deleteRecurring.mutate(id)
       )
-    : buildActivityRows(expensesOn(expenses, todayISO()), t);
+    : buildActivityRows(expensesOn(expenses, todayISO()), t, (id) => deleteExpense.mutate(id));
 
   const title = detailTitle(source, t);
   const emptyLabel = detailEmptyLabel(source, t);

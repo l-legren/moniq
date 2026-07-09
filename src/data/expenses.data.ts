@@ -11,6 +11,8 @@ export type ExpenseRow = {
   amount: number;
   date: string;
   time: string;
+  /** Free-text label, only meaningful for the "other" category. */
+  note?: string;
 };
 
 export async function getExpenseRows(): Promise<ExpenseRow[]> {

@@ -77,6 +77,11 @@ export async function addRecurring(input: NewRecurring): Promise<RecurringItem> 
   return mapRowToRecurring(row);
 }
 
+export async function deleteRecurring(id: string): Promise<void> {
+  const rows = await getRecurringRows();
+  await saveRecurringRows(rows.filter((row) => row.id !== id));
+}
+
 export function incomeTotal(items: RecurringItem[]): number {
   return items.filter((i) => i.type === 'income').reduce((total, i) => total + i.monthlyAmount, 0);
 }

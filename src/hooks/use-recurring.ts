@@ -2,13 +2,14 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import {
   addRecurring,
+  deleteRecurring,
   getRecurring,
   monthlyAmountOf,
   type NewRecurring,
   type RecurringItem,
 } from '@/services/recurring.service';
 
-import { prependOptimistic, rollbackList } from './optimistic';
+import { prependOptimistic, removeOptimistic, rollbackList } from './optimistic';
 import { queryKeys } from './query-keys';
 
 function buildOptimisticRecurring(input: NewRecurring): RecurringItem {
@@ -34,6 +35,18 @@ export function useAddRecurring() {
     onMutate: (input: NewRecurring) =>
       prependOptimistic(client, queryKeys.recurring(), buildOptimisticRecurring(input)),
     onError: (_error, _input, context) =>
+      rollbackList<RecurringItem>(client, queryKeys.recurring(), context),
+    onSettled: () => client.invalidateQueries({ queryKey: queryKeys.recurring() }),
+  });
+}
+
+export function useDeleteRecurring() {
+  const client = useQueryClient();
+
+  return useMutation({
+    mutationFn: deleteRecurring,
+    onMutate: (id: string) => removeOptimistic<RecurringItem>(client, queryKeys.recurring(), id),
+    onError: (_error, _id, context) =>
       rollbackList<RecurringItem>(client, queryKeys.recurring(), context),
     onSettled: () => client.invalidateQueries({ queryKey: queryKeys.recurring() }),
   });

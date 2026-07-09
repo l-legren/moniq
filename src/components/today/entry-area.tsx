@@ -3,37 +3,20 @@ import { StyleSheet, View } from 'react-native';
 
 import { Button } from '@/components/ui/button';
 import { AppText } from '@/components/ui/text';
-import { CategoryPanel } from '@/components/today/category-panel';
 import { Keypad } from '@/components/today/keypad';
-import { type CategoryId } from '@/constants/categories';
 import { Spacing } from '@/constants/theme';
 import { type AmountKey } from '@/services/amount-input';
 
 const KEYPAD_GAP = 14;
 
-type Props = {
+type EntryAreaProps = {
   draftAmount: string;
   hasAmount: boolean;
-  adding: boolean;
-  category: CategoryId | null;
   onKeyPress: (v: AmountKey) => void;
-  onToggleAdd: () => void;
-  onBack: () => void;
-  onSelectCategory: (id: CategoryId) => void;
-  onConfirm: () => void;
+  onAdd: () => void;
 };
 
-export function EntryArea({
-  draftAmount,
-  hasAmount,
-  adding,
-  category,
-  onKeyPress,
-  onToggleAdd,
-  onBack,
-  onSelectCategory,
-  onConfirm,
-}: Props) {
+export function EntryArea({ draftAmount, hasAmount, onKeyPress, onAdd }: EntryAreaProps) {
   const { t } = useTranslation();
 
   const display = draftAmount ? `€${draftAmount}` : '—';
@@ -58,18 +41,8 @@ export function EntryArea({
         <View style={styles.keypadBlock}>
           <Keypad onPress={onKeyPress} />
           <View style={{ height: KEYPAD_GAP }} />
-          <Button label={t('today.add')} disabled={!hasAmount} onPress={onToggleAdd} />
+          <Button label={t('today.add')} disabled={!hasAmount} onPress={onAdd} />
         </View>
-
-        {adding && (
-          <CategoryPanel
-            category={category}
-            canConfirm={hasAmount && category !== null}
-            onSelectCategory={onSelectCategory}
-            onBack={onBack}
-            onConfirm={onConfirm}
-          />
-        )}
       </View>
     </View>
   );
@@ -91,7 +64,6 @@ const styles = StyleSheet.create({
   },
   lowerArea: {
     flex: 1.3,
-    position: 'relative',
     justifyContent: 'center',
   },
   keypadBlock: {

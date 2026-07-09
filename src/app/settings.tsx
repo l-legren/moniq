@@ -2,9 +2,9 @@ import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { ScrollView, StyleSheet, Switch } from 'react-native';
 
+import { DetailHeader } from '@/components/detail/detail-header';
 import { ProfileRow } from '@/components/settings/profile-row';
 import { SettingRow } from '@/components/settings/setting-row';
-import { SettingsHeader } from '@/components/settings/settings-header';
 import { SettingsSection } from '@/components/settings/settings-section';
 import { Button } from '@/components/ui/button';
 import { Screen } from '@/components/ui/screen';
@@ -23,7 +23,7 @@ export default function SettingsScreen() {
 
   return (
     <Screen edges={['top']} background="flat">
-      <SettingsHeader onBack={() => router.back()} />
+      <DetailHeader title={t('settings.title')} onBack={() => router.back()} variant="modal" />
 
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <ProfileRow />

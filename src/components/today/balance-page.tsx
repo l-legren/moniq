@@ -3,10 +3,11 @@ import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
 
 import { Hairline } from '@/components/ui/hairline';
+import { RowIcon } from '@/components/ui/row-icon';
 import { SeeMoreLink } from '@/components/ui/see-more-link';
 import { AppText } from '@/components/ui/text';
 import { WidgetCard } from '@/components/ui/widget-card';
-import { CATEGORY_LABEL_KEYS } from '@/constants/categories';
+import { CATEGORY_ICONS, CATEGORY_LABEL_KEYS } from '@/constants/categories';
 import { Spacing } from '@/constants/theme';
 import { useAllowance } from '@/hooks/use-allowance';
 import { useExpenses } from '@/hooks/use-expenses';
@@ -52,7 +53,7 @@ function BalanceHero({ remaining, dailyBudget }: { remaining: number; dailyBudge
 
 function ActivityRow({ expense }: { expense: Expense }) {
   const { t } = useTranslation();
-  const label = t(CATEGORY_LABEL_KEYS[expense.category]);
+  const label = expense.note?.trim() || t(CATEGORY_LABEL_KEYS[expense.category]);
   const amount = `−${fmt(expense.amount)}`;
 
   return (
@@ -61,15 +62,16 @@ function ActivityRow({ expense }: { expense: Expense }) {
       accessibilityLabel={t('today.expenseRow', { category: label, time: expense.time, amount })}
       style={styles.activityRow}
     >
-      <View importantForAccessibility="no-hide-descendants">
-        <AppText>{label}</AppText>
-        <AppText variant="small" color="text3">
-          {expense.time}
-        </AppText>
+      <RowIcon name={CATEGORY_ICONS[expense.category]} />
+      <View style={styles.activityRowBody} importantForAccessibility="no-hide-descendants">
+        <View>
+          <AppText>{label}</AppText>
+          <AppText variant="small" color="text3">
+            {expense.time}
+          </AppText>
+        </View>
+        <AppText variant="mono">{amount}</AppText>
       </View>
-      <AppText variant="mono" importantForAccessibility="no">
-        {amount}
-      </AppText>
     </View>
   );
 }
@@ -149,6 +151,11 @@ const styles = StyleSheet.create({
     gap: Spacing.three,
   },
   activityRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  activityRowBody: {
+    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',

@@ -1,25 +1,45 @@
+import Ionicons from '@expo/vector-icons/Ionicons';
 import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, View, type LayoutChangeEvent } from 'react-native';
 
 import { AppText } from '@/components/ui/text';
+import { useAppTheme } from '@/hooks/use-app-theme';
 import type { AmountKey } from '@/services/amount-input';
 
 const KEYS: AmountKey[] = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '.', '0', 'del'];
+const DELETE_ICON_SIZE = 24;
 
 function KeypadKey({ value, onPress }: { value: AmountKey; onPress: (v: AmountKey) => void }) {
   const { t } = useTranslation();
-  const label = value === 'del' ? t('today.deleteDigit') : value === '.' ? t('today.decimalPoint') : value;
-  const display = value === 'del' ? '⌫' : value;
+  const { palette } = useAppTheme();
+  const label =
+    value === 'del' ? t('today.deleteDigit') : value === '.' ? t('today.decimalPoint') : value;
 
   return (
     <Pressable
       onPress={() => onPress(value)}
       accessibilityRole="button"
       accessibilityLabel={label}
-      style={({ pressed }) => [styles.key, pressed && styles.pressed]}>
-      <AppText variant="hero" style={styles.glyph} importantForAccessibility="no" accessibilityElementsHidden>
-        {display}
-      </AppText>
+      style={({ pressed }) => [styles.key, pressed && styles.pressed]}
+    >
+      {value === 'del' ? (
+        <Ionicons
+          name="backspace-outline"
+          size={DELETE_ICON_SIZE}
+          color={palette.text}
+          importantForAccessibility="no"
+          accessibilityElementsHidden
+        />
+      ) : (
+        <AppText
+          variant="hero"
+          style={styles.glyph}
+          importantForAccessibility="no"
+          accessibilityElementsHidden
+        >
+          {value}
+        </AppText>
+      )}
     </Pressable>
   );
 }
@@ -57,5 +77,9 @@ const styles = StyleSheet.create({
   glyph: {
     fontSize: 26,
     lineHeight: 30,
+    // `hero`'s -1.5 letter-spacing is tuned for multi-digit amounts; on a single glyph it just
+    // pulls the character off-center within the key, so reset it here.
+    letterSpacing: 0,
+    textAlign: 'center',
   },
 });

@@ -6,7 +6,10 @@
     "cancel": "Cancel",
     "close": "Close",
     "seeMore": "See more",
-    "seeMoreOf": "See all {{section}}"
+    "seeMoreOf": "See all {{section}}",
+    "delete": "Delete",
+    "deleteItem": "Delete {{item}}",
+    "deleteConfirmTitle": "Delete {{item}}?"
   },
   "tabs": {
     "today": "Today",
@@ -41,7 +44,9 @@
     "activity": "Today's activity",
     "noActivity": "No expenses logged yet today",
     "selectCategory": "Select category {{category}}",
-    "expenseRow": "{{category}}, {{time}}, {{amount}}"
+    "expenseRow": "{{category}}, {{time}}, {{amount}}",
+    "noteLabel": "Label",
+    "notePlaceholder": "What was it?"
   },
   "recurring": {
     "title": "Recurring",
@@ -110,7 +115,6 @@
   },
   "settings": {
     "title": "Settings",
-    "back": "Back",
     "appearance": "Appearance",
     "darkMode": "Dark mode",
     "account": "Account",

@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useFocusEffect, useRouter } from 'expo-router';
+import { useCallback, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import { Screen } from '@/components/ui/screen';
@@ -7,37 +8,36 @@ import { EntryArea } from '@/components/today/entry-area';
 import { ResistedPager } from '@/components/today/resisted-pager';
 import { ScrollHint } from '@/components/today/scroll-hint';
 import { TodayHeader } from '@/components/today/today-header';
-import { type CategoryId } from '@/constants/categories';
 import { Spacing } from '@/constants/theme';
-import { useAddExpense } from '@/hooks/use-expenses';
 import { applyAmountKey, type AmountKey } from '@/services/amount-input';
 
 export default function TodayScreen() {
+  const router = useRouter();
   const [draftAmount, setDraftAmount] = useState('');
-  const [category, setCategory] = useState<CategoryId | null>(null);
-  const [adding, setAdding] = useState(false);
-  const addExpense = useAddExpense();
 
   const hasAmount = parseFloat(draftAmount) > 0;
 
   const handleKey = (key: AmountKey) => setDraftAmount((current) => applyAmountKey(current, key));
 
-  const toggleAdd = () => {
-    if (hasAmount) setAdding((value) => !value);
+  const openCategoryPicker = () => {
+    if (hasAmount) router.push({ pathname: '/add-expense', params: { amount: draftAmount } });
   };
 
-  const confirm = () => {
-    if (!hasAmount || category === null) return;
-    addExpense.mutate({ category, amount: parseFloat(draftAmount) });
-    setDraftAmount('');
-    setCategory(null);
-    setAdding(false);
-  };
+  // The add-expense modal owns category selection + submission; clear the draft whenever this
+  // screen regains focus (confirmed or cancelled — either way the keypad should start fresh).
+  useFocusEffect(
+    useCallback(() => {
+      setDraftAmount('');
+    }, [])
+  );
 
   return (
-    <Screen edges={['top']}>
+    // `NativeTabs` renders a real, edge-to-edge translucent tab bar — content isn't shrunk to
+    // make room for it like a JS tab bar would; only the bottom safe-area inset grows to cover
+    // it. Without the `bottom` edge here, the pager's absolutely-positioned scroll hint renders
+    // underneath the tab bar instead of above it.
+    <Screen edges={['top', 'bottom']}>
       <ResistedPager
-        enabled={!adding}
         hint={<ScrollHint />}
         front={
           <View style={styles.front}>
@@ -45,13 +45,8 @@ export default function TodayScreen() {
             <EntryArea
               draftAmount={draftAmount}
               hasAmount={hasAmount}
-              adding={adding}
-              category={category}
               onKeyPress={handleKey}
-              onToggleAdd={toggleAdd}
-              onBack={() => setAdding(false)}
-              onSelectCategory={setCategory}
-              onConfirm={confirm}
+              onAdd={openCategoryPicker}
             />
           </View>
         }
