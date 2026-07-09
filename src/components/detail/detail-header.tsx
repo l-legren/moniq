@@ -61,13 +61,7 @@ export function DetailHeader({ title, onBack, onAdd, variant = 'push' }: DetailH
       </AppText>
       {onAdd ? (
         <HeaderIconButton icon="add" onPress={onAdd} accessibilityLabel={t('recurring.addItem')} />
-      ) : (
-        <View
-          style={styles.iconButton}
-          accessibilityElementsHidden
-          importantForAccessibility="no-hide-descendants"
-        />
-      )}
+      ) : null}
     </View>
   );
 }
