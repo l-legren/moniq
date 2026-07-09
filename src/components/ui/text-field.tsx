@@ -1,3 +1,4 @@
+import { type ReactNode } from 'react';
 import { StyleSheet, TextInput, View, type TextInputProps } from 'react-native';
 
 import { AppText } from '@/components/ui/text';
@@ -6,16 +7,27 @@ import { useAppTheme } from '@/hooks/use-app-theme';
 
 type TextFieldProps = TextInputProps & {
   label: string;
+  /** Optional node rendered opposite the label (e.g. a "Forgot?" link). */
+  labelRight?: ReactNode;
 };
 
-export function TextField({ label, style, accessibilityLabel, ...rest }: TextFieldProps) {
+export function TextField({
+  label,
+  labelRight,
+  style,
+  accessibilityLabel,
+  ...rest
+}: TextFieldProps) {
   const { palette } = useAppTheme();
 
   return (
     <View style={styles.container}>
-      <AppText variant="sectionLabel" color="text3">
-        {label}
-      </AppText>
+      <View style={styles.labelRow}>
+        <AppText variant="sectionLabel" color="text3">
+          {label}
+        </AppText>
+        {labelRight}
+      </View>
       <TextInput
         placeholderTextColor={palette.text3}
         accessibilityLabel={accessibilityLabel ?? label}
@@ -33,6 +45,11 @@ export function TextField({ label, style, accessibilityLabel, ...rest }: TextFie
 const styles = StyleSheet.create({
   container: {
     gap: Spacing.two,
+  },
+  labelRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
   input: {
     height: 48,
