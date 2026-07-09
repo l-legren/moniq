@@ -10,13 +10,15 @@ import { Button } from '@/components/ui/button';
 import { Screen } from '@/components/ui/screen';
 import { Spacing } from '@/constants/theme';
 import { useAppTheme } from '@/hooks/use-app-theme';
+import { useAuth } from '@/hooks/use-auth';
 
 export default function SettingsScreen() {
   const { t } = useTranslation();
   const router = useRouter();
   const { isDark, toggle, palette } = useAppTheme();
+  const { signOut } = useAuth();
 
-  // Auth is out of scope for the MVP — these are intentional non-functional stubs.
+  // Account deletion isn't wired to a backend yet — design-only for now.
   const noop = () => {};
 
   return (
@@ -40,7 +42,7 @@ export default function SettingsScreen() {
         </SettingsSection>
 
         <SettingsSection label={t('settings.account')}>
-          <Button variant="secondary" label={t('settings.logOut')} onPress={noop} />
+          <Button variant="secondary" label={t('settings.logOut')} onPress={signOut} />
           <Button variant="destructive" label={t('settings.deleteAccount')} onPress={noop} />
         </SettingsSection>
       </ScrollView>
