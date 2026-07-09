@@ -5,7 +5,7 @@
   "hooks": {
     "PreToolUse": [
       {
-        "matcher": "Edit|Write|MultiEdit",
+        "matcher": "Read|Edit|Write|MultiEdit|Grep|Glob",
         "hooks": [
           {
             "type": "command",
