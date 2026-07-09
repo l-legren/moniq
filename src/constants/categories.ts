@@ -49,7 +49,6 @@ export const INCOME_CATEGORY_IDS = [
   'sideBusiness',
   'rental',
   'investments',
-  'gifts',
   'other',
 ] as const;
 
@@ -61,7 +60,6 @@ export const INCOME_CATEGORY_LABEL_KEYS: Record<IncomeCategoryId, string> = {
   sideBusiness: 'categories.income.sideBusiness',
   rental: 'categories.income.rental',
   investments: 'categories.income.investments',
-  gifts: 'categories.income.gifts',
   other: 'categories.other',
 };
 
@@ -71,7 +69,6 @@ export const INCOME_CATEGORY_ICONS: Record<IncomeCategoryId, IoniconName> = {
   sideBusiness: 'rocket-outline',
   rental: 'home-outline',
   investments: 'trending-up-outline',
-  gifts: 'gift-outline',
   other: 'ellipsis-horizontal-circle-outline',
 };
 

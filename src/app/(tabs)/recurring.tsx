@@ -4,7 +4,9 @@ import { ScrollView, StyleSheet } from 'react-native';
 import { DerivationCard } from '@/components/recurring/derivation-card';
 import { RecurringHeader } from '@/components/recurring/recurring-header';
 import { RecurringSection } from '@/components/recurring/recurring-section';
+import { SavingsGoalSlider } from '@/components/recurring/savings-goal-slider';
 import { Screen } from '@/components/ui/screen';
+import { WidgetCard } from '@/components/ui/widget-card';
 import { Spacing } from '@/constants/theme';
 import { useAllowance } from '@/hooks/use-allowance';
 import { useRecurring } from '@/hooks/use-recurring';
@@ -22,6 +24,9 @@ export default function RecurringScreen() {
       <RecurringHeader />
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         <DerivationCard />
+        <WidgetCard>
+          <SavingsGoalSlider />
+        </WidgetCard>
         <RecurringSection
           title={t('recurring.income')}
           total={incomeTotal}

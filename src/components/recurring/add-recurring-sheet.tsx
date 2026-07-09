@@ -1,9 +1,9 @@
-import { useEffect, useState, type ReactNode } from 'react';
+import { useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ScrollView, StyleSheet, View } from 'react-native';
 
+import { AllowancePreview } from '@/components/recurring/allowance-preview';
 import { MonthPicker } from '@/components/recurring/month-picker';
-import { SavingsField } from '@/components/recurring/savings-field';
 import { SheetHeader } from '@/components/recurring/sheet-header';
 import { Button } from '@/components/ui/button';
 import { CategoryGrid } from '@/components/ui/category-grid';
@@ -25,7 +25,6 @@ import {
 import { Spacing } from '@/constants/theme';
 import { useAllowance } from '@/hooks/use-allowance';
 import { useAddRecurring } from '@/hooks/use-recurring';
-import { useSetSavingsGoal } from '@/hooks/use-savings-goal';
 import { computeAllowance } from '@/services/allowance.service';
 import {
   monthlyAmountOf,
@@ -85,7 +84,6 @@ export function AddRecurringSheet({
   const { t } = useTranslation();
   const { incomeTotal, costsTotal, savingsGoal } = useAllowance();
   const addRecurring = useAddRecurring();
-  const setSavingsGoal = useSetSavingsGoal();
 
   const [type, setType] = useState<RecurringType>(initialType);
   const [name, setName] = useState('');
@@ -94,13 +92,6 @@ export function AddRecurringSheet({
   const [cadence, setCadence] = useState<Cadence>('monthly');
   const [frequencyKind, setFrequencyKind] = useState<FrequencyKind>('perpetual');
   const [lastPayment, setLastPayment] = useState(defaultLastPayment);
-  const [savingsDraft, setSavingsDraft] = useState(savingsGoal);
-
-  useEffect(() => {
-    // Keep the slider in sync with the persisted goal (e.g. after it first loads, or an external change).
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setSavingsDraft(savingsGoal);
-  }, [savingsGoal]);
 
   const isIncome = type === 'income';
 
@@ -109,7 +100,7 @@ export function AddRecurringSheet({
   const previewAllowance = computeAllowance({
     incomeTotal: incomeTotal + (type === 'income' ? draftMonthly : 0),
     costsTotal: costsTotal + (type === 'expense' ? draftMonthly : 0),
-    savingsGoal: savingsDraft,
+    savingsGoal,
   });
   const canConfirm = name.trim().length > 0 && amountValue > 0;
 
@@ -231,12 +222,7 @@ export function AddRecurringSheet({
           </Field>
         )}
 
-        <SavingsField
-          value={savingsDraft}
-          onChange={setSavingsDraft}
-          onCommit={(value) => setSavingsGoal.mutate(value)}
-          previewLabel={fmtR(previewAllowance)}
-        />
+        <AllowancePreview amount={fmtR(previewAllowance)} />
 
         <Button
           label={isIncome ? t('recurring.addIncome') : t('recurring.addExpense')}
