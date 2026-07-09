@@ -1,7 +1,13 @@
 import { Pressable, StyleSheet, type StyleProp, type ViewStyle } from 'react-native';
 
 import { AppText } from '@/components/ui/text';
-import { Radius, Spacing, type Palette, type PaletteColor } from '@/constants/theme';
+import {
+  Radius,
+  Spacing,
+  type Palette,
+  type PaletteColor,
+  type ThemeName,
+} from '@/constants/theme';
 import { useAppTheme } from '@/hooks/use-app-theme';
 
 type Variant = 'primary' | 'secondary' | 'destructive';
@@ -10,8 +16,27 @@ type Tone = Extract<PaletteColor, 'accent' | 'good' | 'bad'>;
 type ButtonColors = {
   background: string;
   border: string;
+  borderWidth: number;
   text: PaletteColor;
 };
+
+/** Soft outline shadow so the pill button lifts off the gradient bg. Component-local — not a shared design token. */
+const ButtonShadow = {
+  dark: {
+    shadowColor: '#000000',
+    shadowOpacity: 0.35,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 6,
+  },
+  light: {
+    shadowColor: '#5A1030',
+    shadowOpacity: 0.18,
+    shadowRadius: 12,
+    shadowOffset: { width: 0, height: 6 },
+    elevation: 4,
+  },
+} as const satisfies Record<ThemeName, ViewStyle>;
 
 type ButtonProps = {
   label: string;
@@ -30,12 +55,15 @@ function resolveColors(
   tone: Tone,
   disabled: boolean
 ): ButtonColors {
-  if (disabled) return { background: palette.card, border: palette.hairline, text: 'text3' };
+  if (disabled)
+    return { background: palette.card, border: palette.hairline, borderWidth: 1, text: 'text3' };
   if (variant === 'primary')
-    return { background: palette[tone], border: 'transparent', text: 'onAccent' };
+    return { background: palette[tone], border: 'transparent', borderWidth: 0, text: 'onAccent' };
   if (variant === 'destructive')
-    return { background: palette.card, border: palette.bad, text: 'bad' };
-  return { background: palette.card, border: palette.hairline, text: 'text' };
+    return { background: palette.card, border: palette.bad, borderWidth: 1.5, text: 'bad' };
+  // Secondary uses `text3` instead of the near-invisible `hairline` so the outline still reads
+  // against the gradient background, not just the flat card fill it was designed for.
+  return { background: palette.card, border: palette.text3, borderWidth: 1.5, text: 'text' };
 }
 
 function pressedOpacity(disabled: boolean, pressed: boolean): number {
@@ -45,8 +73,8 @@ function pressedOpacity(disabled: boolean, pressed: boolean): number {
 }
 
 /**
- * Flat 4px-radius button. primary = tone fill; secondary = card + hairline outline;
- * destructive = card + red outline + red text.
+ * Pill button (fully rounded ends) with a soft outline shadow. primary = tone fill;
+ * secondary = card + outline; destructive = card + red outline + red text.
  */
 export function Button({
   label,
@@ -57,7 +85,7 @@ export function Button({
   accessibilityLabel,
   style,
 }: ButtonProps) {
-  const { palette } = useAppTheme();
+  const { palette, theme } = useAppTheme();
   const colors = resolveColors(palette, variant, tone, disabled);
 
   return (
@@ -69,9 +97,11 @@ export function Button({
       accessibilityLabel={accessibilityLabel ?? label}
       style={({ pressed }) => [
         styles.base,
+        ButtonShadow[theme],
         {
           backgroundColor: colors.background,
           borderColor: colors.border,
+          borderWidth: colors.borderWidth,
           opacity: pressedOpacity(disabled, pressed),
         },
         style,
@@ -87,8 +117,7 @@ export function Button({
 const styles = StyleSheet.create({
   base: {
     height: 52,
-    borderRadius: Radius.base,
-    borderWidth: StyleSheet.hairlineWidth,
+    borderRadius: Radius.pill,
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: Spacing.four,
