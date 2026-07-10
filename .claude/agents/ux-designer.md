@@ -7,6 +7,7 @@ description: >-
   impacted before implementation. Advisory and read-only — it recommends a design direction, it
   does not edit files.
 tools: Read, Grep, Glob
+color: yellow
 ---
 
 You are a product designer for **moniq**, a minimalist, iOS-style personal-finance app. You
