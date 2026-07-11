@@ -4,6 +4,7 @@ import { Pressable, StyleSheet, View } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, {
   Easing,
+  runOnJS,
   useAnimatedStyle,
   useSharedValue,
   withTiming,
@@ -39,6 +40,9 @@ type Props = {
 export function ResistedPager({ front, back, hint, enabled = true }: Props) {
   const { t } = useTranslation();
   const [height, setHeight] = useState(0);
+  // JS-thread mirror of the reveal state, used to keep the off-screen page out of the
+  // accessibility tree — the animated `frac` alone lives on the UI thread and can't drive props.
+  const [revealed, setRevealed] = useState(false);
   const frac = useSharedValue(0);
   const startFrac = useSharedValue(0);
 
@@ -51,11 +55,14 @@ export function ResistedPager({ front, back, hint, enabled = true }: Props) {
       frac.value = clamp01(startFrac.value - e.translationY / height);
     })
     .onEnd(() => {
-      frac.value = withTiming(frac.value > REVEAL_THRESHOLD ? 1 : 0, SNAP);
+      const willReveal = frac.value > REVEAL_THRESHOLD;
+      frac.value = withTiming(willReveal ? 1 : 0, SNAP);
+      runOnJS(setRevealed)(willReveal);
     });
 
   const reveal = () => {
     frac.value = withTiming(1, SNAP);
+    setRevealed(true);
   };
 
   const pagerStyle = useAnimatedStyle(() => {
@@ -70,19 +77,30 @@ export function ResistedPager({ front, back, hint, enabled = true }: Props) {
       {height > 0 && (
         <GestureDetector gesture={pan}>
           <Animated.View style={[{ height: height * 2 }, pagerStyle]}>
-            <View style={{ height }}>
+            <View
+              style={{ height }}
+              accessibilityElementsHidden={revealed}
+              importantForAccessibility={revealed ? 'no-hide-descendants' : 'auto'}
+            >
               {front}
               <Animated.View style={[styles.hint, hintStyle]}>
                 <Pressable
                   onPress={reveal}
                   accessibilityRole="button"
                   accessibilityLabel={t('today.showBalance')}
-                  hitSlop={Spacing.three}>
+                  hitSlop={Spacing.three}
+                >
                   {hint}
                 </Pressable>
               </Animated.View>
             </View>
-            <View style={{ height }}>{back}</View>
+            <View
+              style={{ height }}
+              accessibilityElementsHidden={!revealed}
+              importantForAccessibility={revealed ? 'auto' : 'no-hide-descendants'}
+            >
+              {back}
+            </View>
           </Animated.View>
         </GestureDetector>
       )}

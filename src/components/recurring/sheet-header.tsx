@@ -16,12 +16,14 @@ export function SheetHeader({ title, onClose }: SheetHeaderProps) {
 
   return (
     <View style={styles.row}>
-      <AppText variant="title">{title}</AppText>
+      <AppText variant="title" accessibilityRole="header">
+        {title}
+      </AppText>
       <Pressable
         onPress={onClose}
         accessibilityRole="button"
         accessibilityLabel={t('common.close')}
-        hitSlop={8}
+        hitSlop={10}
       >
         <Ionicons name="close" size={24} color={palette.text2} />
       </Pressable>

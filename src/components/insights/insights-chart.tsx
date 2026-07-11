@@ -8,6 +8,7 @@ import { WidgetCard } from '@/components/ui/widget-card';
 import { FontFamily, Radius, Spacing } from '@/constants/theme';
 import { useAppTheme } from '@/hooks/use-app-theme';
 import type { InsightsBar } from '@/hooks/use-insights';
+import { fmtR } from '@/utils/money';
 
 const CHART_HEIGHT = 150;
 const BAR_WIDTH = 18;
@@ -31,6 +32,15 @@ export function InsightsChart({ title, footer, bars }: InsightsChartProps) {
     frontColor: bar.tone === 'bad' ? palette.bad : palette.good,
   }));
 
+  // Text alternative for the bar chart (WCAG 1.1.1): AT users can't perceive the bars,
+  // so read the per-period values back as one string, e.g. "Daily spend: Mon €12, Tue €0…".
+  const chartLabel = t('insights.chartSummary', {
+    title,
+    values: bars
+      .map((bar) => t('insights.barValue', { label: bar.label, amount: fmtR(bar.value) }))
+      .join(', '),
+  });
+
   // Distribute the bars evenly across the measured width.
   const count = bars.length || 1;
   const spacing =
@@ -46,26 +56,28 @@ export function InsightsChart({ title, footer, bars }: InsightsChartProps) {
         </AppText>
 
         {hasData ? (
-          <BarChart
-            data={data}
-            width={width || undefined}
-            height={CHART_HEIGHT}
-            barWidth={BAR_WIDTH}
-            spacing={spacing}
-            initialSpacing={INITIAL_SPACING}
-            barBorderTopLeftRadius={Radius.base}
-            barBorderTopRightRadius={Radius.base}
-            hideRules
-            hideYAxisText
-            yAxisThickness={0}
-            xAxisThickness={0}
-            disableScroll
-            xAxisLabelTextStyle={{
-              color: palette.text3,
-              fontFamily: FontFamily.regular,
-              fontSize: 11,
-            }}
-          />
+          <View accessible accessibilityLabel={chartLabel}>
+            <BarChart
+              data={data}
+              width={width || undefined}
+              height={CHART_HEIGHT}
+              barWidth={BAR_WIDTH}
+              spacing={spacing}
+              initialSpacing={INITIAL_SPACING}
+              barBorderTopLeftRadius={Radius.base}
+              barBorderTopRightRadius={Radius.base}
+              hideRules
+              hideYAxisText
+              yAxisThickness={0}
+              xAxisThickness={0}
+              disableScroll
+              xAxisLabelTextStyle={{
+                color: palette.text3,
+                fontFamily: FontFamily.regular,
+                fontSize: 11,
+              }}
+            />
+          </View>
         ) : (
           <AppText variant="caption" color="text3" style={styles.empty}>
             {t('insights.noData')}

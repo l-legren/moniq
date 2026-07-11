@@ -56,7 +56,7 @@ export function DetailHeader({ title, onBack, onAdd, variant = 'push' }: DetailH
         onPress={onBack}
         accessibilityLabel={t('common.back')}
       />
-      <AppText variant="title" style={styles.title}>
+      <AppText variant="title" style={styles.title} accessibilityRole="header">
         {title}
       </AppText>
       {onAdd ? (

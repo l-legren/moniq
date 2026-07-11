@@ -49,6 +49,7 @@
     "greetingEvening": "Good evening, {{name}}",
     "openSettings": "Open settings",
     "amount": "Amount {{amount}}",
+    "noAmount": "No amount entered yet",
     "deleteDigit": "Delete last digit",
     "decimalPoint": "Decimal point",
     "scrollForBalance": "Scroll for balance",
@@ -121,6 +122,8 @@
     "whereItGoes": "Where it goes",
     "suggestions": "Suggestions",
     "noData": "No spending logged for this period",
+    "chartSummary": "{{title}}: {{values}}",
+    "barValue": "{{label}} {{amount}}",
     "tips": {
       "diningTitle": "Dining out is climbing",
       "diningBody": "Restaurants are your fastest-growing category. A monthly cap could free up more toward your goal.",

@@ -12,7 +12,7 @@ type AuthHeaderProps = {
 export function AuthHeader({ headline, subline }: AuthHeaderProps) {
   return (
     <View style={styles.block}>
-      <AppText variant="title" style={styles.center}>
+      <AppText variant="title" style={styles.center} accessibilityRole="header">
         {headline}
       </AppText>
       <AppText variant="caption" color="text3" style={styles.center}>

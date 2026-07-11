@@ -21,7 +21,8 @@ export const Palettes = {
     cardTrans: 'rgba(58,50,56,0.45)',
     text: '#F1EFF0',
     text2: '#ABA6AA',
-    text3: '#7A747A',
+    // Muted tier — darkened from #7A747A (≈3.85:1) to clear WCAG AA 4.5:1 on `bg`.
+    text3: '#878187',
     hairline: 'rgba(240,225,235,0.08)',
     accent: '#FF4FA3',
     accentLight: 'rgba(255,79,163,0.16)',
@@ -43,7 +44,8 @@ export const Palettes = {
     cardTrans: 'rgba(255,255,255,0.60)',
     text: '#2A2126',
     text2: '#8A7E85',
-    text3: '#B2A4AB',
+    // Muted tier — darkened from #B2A4AB (≈2.1:1) to clear WCAG AA 4.5:1 on `bg`.
+    text3: '#6E676C',
     hairline: 'rgba(60,30,45,0.09)',
     accent: '#D91E85',
     accentLight: 'rgba(217,30,133,0.12)',

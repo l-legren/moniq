@@ -49,6 +49,7 @@ export function SavingsGoalSlider() {
         maximumTrackTintColor={palette.hairline}
         thumbTintColor={palette.accent2}
         accessibilityLabel={t('recurring.savingsTarget')}
+        accessibilityValue={{ min: MIN, max: MAX, now: draft, text: fmtR(draft) }}
       />
     </View>
   );

@@ -23,7 +23,14 @@ export function TextField({
   return (
     <View style={styles.container}>
       <View style={styles.labelRow}>
-        <AppText variant="sectionLabel" color="text3">
+        {/* Visual label only — the input below carries this text as its accessible name, so
+            hide it from AT to avoid announcing the label twice. `labelRight` stays visible. */}
+        <AppText
+          variant="sectionLabel"
+          color="text3"
+          accessibilityElementsHidden
+          importantForAccessibility="no"
+        >
           {label}
         </AppText>
         {labelRight}

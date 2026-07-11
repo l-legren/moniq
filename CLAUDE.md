@@ -16,6 +16,12 @@ All interactive and informational UI in the app must be accessible to screen rea
 - Stat/data boxes should use `accessible={true}` + `accessibilityLabel` on the container (e.g. `"Daily allowance: €40"`) and hide child Text nodes individually so VoiceOver reads the group as one unit.
 - Images that convey meaning need `accessibilityLabel`; purely decorative images use `accessibilityElementsHidden={true}`.
 - Custom gesture interactions that aren't screen-reader friendly (e.g. the resisted-scroll balance reveal) must provide an AT-only fallback action.
+- **Semantic structure:** every screen/section/sheet title Text must set `accessibilityRole="header"` so the rotor/heading navigation can jump between sections. Roles beyond `"button"`/`"link"` matter — use them.
+- **Adjustable controls** (sliders, steppers) must set `accessibilityValue={{ min, max, now, text }}`, where `text` is the human-readable value (e.g. the formatted `€` amount) — a bare number is not enough.
+- **Minimum touch target 44×44 (WCAG 2.5.5):** any interactive element whose visual box is smaller (icon buttons, chevrons, trailing actions) must grow its touch area with `hitSlop` to reach 44px. Compute it from the icon size (`(44 - iconSize) / 2`) rather than guessing.
+- **Manage visibility of inactive content:** content that is mounted but off-screen or behind another page (paged/animated reveals, collapsed panels that stay mounted) must toggle `accessibilityElementsHidden` / `importantForAccessibility` in step with its visible state, so AT can't wander into hidden UI. This is distinct from decorative hiding above — it's a real, focusable region that is temporarily inactive.
+- **No double announcement:** never set an `accessibilityLabel` that duplicates a visible label already in the AT tree (e.g. a `TextField`'s visible label + the input's own label). Keep one side accessible and hide the other with `importantForAccessibility="no"` / `accessibilityElementsHidden`.
+- **Never let a placeholder/sentinel glyph reach a screen reader.** Empty-state or fallback values (`—`, `•`, `--`) that stand in for "no value" must resolve to a worded label ("No amount entered yet"), not be interpolated into an `accessibilityLabel` where they'd be read as the glyph's Unicode name.
 
 # Repository structure
 

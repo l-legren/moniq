@@ -3,6 +3,7 @@ import { Pressable, StyleSheet, View } from 'react-native';
 
 import type { AuthMode } from '@/components/auth/auth-mode';
 import { Button } from '@/components/ui/button';
+import { FormError } from '@/components/ui/form-error';
 import { AppText } from '@/components/ui/text';
 import { TextField } from '@/components/ui/text-field';
 import { Spacing } from '@/constants/theme';
@@ -39,6 +40,8 @@ export function AuthForm({
 }: AuthFormProps) {
   const { t } = useTranslation();
   const isSignUp = mode === 'signup';
+
+  const errorMessage = errorCode ? t(`auth.errors.${errorCode}`) : null;
 
   return (
     <View style={styles.form}>
@@ -86,11 +89,7 @@ export function AuthForm({
         secureTextEntry
       />
 
-      {errorCode && (
-        <AppText color="bad" variant="caption" style={styles.center}>
-          {t(`auth.errors.${errorCode}`)}
-        </AppText>
-      )}
+      <FormError message={errorMessage} />
 
       <Button
         label={isSubmitting ? t('auth.pleaseWait') : t(isSignUp ? 'auth.signUp' : 'auth.signIn')}
@@ -105,9 +104,6 @@ export function AuthForm({
 const styles = StyleSheet.create({
   form: {
     gap: FIELD_GAP,
-  },
-  center: {
-    textAlign: 'center',
   },
   submit: {
     marginTop: Spacing.three,

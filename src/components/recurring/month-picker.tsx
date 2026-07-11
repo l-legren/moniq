@@ -11,6 +11,10 @@ import { useAppTheme } from '@/hooks/use-app-theme';
 const MONTH_LABELS = Array.from({ length: 12 }, (_, i) => format(new Date(2000, i, 1), 'MMM'));
 const SHORTCUT_MONTHS = [3, 6, 12];
 
+const CHEVRON_SIZE = 18;
+/** Grow the year chevrons to the 44px minimum target (WCAG 2.5.5) without changing their size. */
+const CHEVRON_HIT_SLOP = (44 - CHEVRON_SIZE) / 2;
+
 function pad(n: number): string {
   return n < 10 ? `0${n}` : `${n}`;
 }
@@ -126,19 +130,19 @@ export function MonthPicker({ value, onChange }: MonthPickerProps) {
           accessibilityRole="button"
           accessibilityLabel={t('recurring.previousYear')}
           accessibilityState={{ disabled: !canGoPrevYear }}
-          hitSlop={Spacing.two}
+          hitSlop={CHEVRON_HIT_SLOP}
           style={{ opacity: canGoPrevYear ? 1 : 0.3 }}
         >
-          <Ionicons name="chevron-back" size={18} color={palette.text2} />
+          <Ionicons name="chevron-back" size={CHEVRON_SIZE} color={palette.text2} />
         </Pressable>
         <AppText variant="bodyMedium">{year}</AppText>
         <Pressable
           onPress={() => setYear(year + 1)}
           accessibilityRole="button"
           accessibilityLabel={t('recurring.nextYear')}
-          hitSlop={Spacing.two}
+          hitSlop={CHEVRON_HIT_SLOP}
         >
-          <Ionicons name="chevron-forward" size={18} color={palette.text2} />
+          <Ionicons name="chevron-forward" size={CHEVRON_SIZE} color={palette.text2} />
         </Pressable>
       </View>
 

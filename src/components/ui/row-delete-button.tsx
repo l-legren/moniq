@@ -6,6 +6,8 @@ import { Spacing } from '@/constants/theme';
 import { useAppTheme } from '@/hooks/use-app-theme';
 
 const ICON_SIZE = 18;
+/** Grow the touch area to the 44px minimum target (WCAG 2.5.5) without changing the visual size. */
+const HIT_SLOP = (44 - ICON_SIZE) / 2;
 
 type RowDeleteButtonProps = {
   /** Name of the item being deleted, used in the confirmation prompt and accessibility label. */
@@ -30,7 +32,7 @@ export function RowDeleteButton({ itemName, onConfirm }: RowDeleteButtonProps) {
       onPress={handlePress}
       accessibilityRole="button"
       accessibilityLabel={t('common.deleteItem', { item: itemName })}
-      hitSlop={Spacing.two}
+      hitSlop={HIT_SLOP}
       style={styles.button}
     >
       <Ionicons name="trash-outline" size={ICON_SIZE} color={palette.bad} />

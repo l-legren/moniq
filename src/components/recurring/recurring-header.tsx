@@ -9,7 +9,9 @@ export function RecurringHeader() {
 
   return (
     <View style={styles.row}>
-      <AppText variant="title">{t('recurring.title')}</AppText>
+      <AppText variant="title" accessibilityRole="header">
+        {t('recurring.title')}
+      </AppText>
     </View>
   );
 }

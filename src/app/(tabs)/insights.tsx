@@ -29,7 +29,9 @@ export default function InsightsScreen() {
   return (
     <Screen edges={['top']}>
       <View style={styles.header}>
-        <AppText variant="title">{t('insights.title')}</AppText>
+        <AppText variant="title" accessibilityRole="header">
+          {t('insights.title')}
+        </AppText>
       </View>
 
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>

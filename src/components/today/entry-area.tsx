@@ -1,5 +1,6 @@
+import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { StyleSheet, View } from 'react-native';
+import { AccessibilityInfo, StyleSheet, View } from 'react-native';
 
 import { Button } from '@/components/ui/button';
 import { AppText } from '@/components/ui/text';
@@ -20,6 +21,15 @@ export function EntryArea({ draftAmount, hasAmount, onKeyPress, onAdd }: EntryAr
   const { t } = useTranslation();
 
   const display = draftAmount ? `€${draftAmount}` : '—';
+  // The visual placeholder is an em dash; screen readers would read it as "dash", so give
+  // the empty state its own worded label instead of interpolating the glyph.
+  const amountLabel = draftAmount ? t('today.amount', { amount: display }) : t('today.noAmount');
+
+  // Announce the running total as digits are entered (WCAG 4.1.3). Android reads the polite
+  // live region below; iOS ignores it, so announce imperatively while an amount is present.
+  useEffect(() => {
+    if (draftAmount) AccessibilityInfo.announceForAccessibility(amountLabel);
+  }, [draftAmount, amountLabel]);
 
   return (
     <View style={styles.container}>
@@ -31,7 +41,8 @@ export function EntryArea({ draftAmount, hasAmount, onKeyPress, onAdd }: EntryAr
           variant="heroXl"
           color={hasAmount ? 'text' : 'text3'}
           style={styles.center}
-          accessibilityLabel={t('today.amount', { amount: display })}
+          accessibilityLabel={amountLabel}
+          accessibilityLiveRegion="polite"
         >
           {display}
         </AppText>
