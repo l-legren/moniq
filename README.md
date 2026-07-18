@@ -1,56 +1,111 @@
-# Welcome to your Expo app 👋
+# moniq
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+A daily-allowance budgeting app for iOS, Android, and web, built with Expo.
 
-## Get started
+moniq turns your monthly income, fixed costs, and savings goal into a single number: **how much you can spend today**. Log expenses against that daily allowance, track recurring income and fixed costs, and review spending patterns over time — all with a fully accessible, offline-first mobile UI.
 
-1. Install dependencies
+## Core concept
 
-   ```bash
-   npm install
-   ```
+The daily allowance is the monthly surplus spread evenly across the month:
 
-2. Start the app
-
-   ```bash
-   npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
+```
+dailyAllowance = (monthlyIncome − fixedCosts − savingsGoal) / 30
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+Each day starts with that budget; logging an expense reduces what's left for today. The **Today** tab shows the live balance, **Recurring** manages the income/cost items that feed the formula, and **Insights** aggregates historical spending by week/month and category.
 
-### Other setup steps
+## Screens
 
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
+| Screen                 | Purpose                                                                           |
+| ---------------------- | --------------------------------------------------------------------------------- |
+| `(tabs)/index` (Today) | Daily allowance, remaining balance, quick expense entry                           |
+| `(tabs)/recurring`     | Recurring income and fixed-cost items (monthly/yearly, perpetual or term-limited) |
+| `(tabs)/insights`      | Spending aggregated by period and category, charts                                |
+| `add-expense`          | Log a new expense                                                                 |
+| `breakdown`            | Category/period breakdown detail                                                  |
+| `detail`               | Single expense/recurring item detail                                              |
+| `settings`             | Savings goal, preferences                                                         |
+| `login`                | Supabase email/password auth                                                      |
 
-## Learn more
+## Architecture
 
-To learn more about developing your project with Expo, look at the following resources:
+The app enforces a strict one-directional layering under `src/`, so each layer only knows about the one beneath it:
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+```
+src/app/        screens (Expo Router)   → call hooks only
+src/hooks/      React Query cache layer → import services only
+src/services/   business logic          → import data only
+src/data/       persistence             → AsyncStorage / Supabase only
+```
 
-## Join the community
+- **`src/app/`** — file-based routes (Expo Router). Screens are presentation only; all state and logic is delegated to hooks.
+- **`src/hooks/`** — TanStack React Query wrappers (`useQuery`/`useMutation`, optimistic updates). All cache keys are centralized in `src/hooks/query-keys.ts`.
+- **`src/services/`** — pure business logic: the allowance formula, expense/recurring/savings domain models and mappers, insights aggregation, auth rules. No framework or storage dependencies — this is the most heavily unit-tested layer.
+- **`src/data/`** — the only layer that touches persistence: local data (expenses, recurring items, savings goal, settings) via `AsyncStorage`, and remote auth/session via a shared Supabase client (`src/data/supabase.ts`). This is the intended swap point if a networked backend is extended in the future.
 
-Join our community of developers creating universal apps.
+Supporting directories:
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+- `src/components/` — shared UI (`ui/` = design-system primitives) plus screen-specific components (`today/`, `insights/`, `recurring/`, `detail/`, `settings/`, `auth/`).
+- `src/constants/` — theme tokens (colors, spacing) and category definitions.
+- `src/i18n/` — i18next setup and locale strings (`locales/en.json`); all UI copy is externalized, no hardcoded strings.
+- `src/utils/` — small framework-agnostic helpers (dates, ids).
+- `src/types/` — shared TypeScript types.
+
+## Tech stack
+
+- **[Expo](https://expo.dev) / React Native 0.86** — cross-platform app shell (iOS, Android, web), with the **React Compiler** enabled for automatic memoization.
+- **[Expo Router](https://docs.expo.dev/router/introduction/)** — file-based, typed navigation.
+- **[TanStack React Query](https://tanstack.com/query)** — async state/cache management with optimistic updates.
+- **[Supabase](https://supabase.com)** — authentication (email/password) and session management.
+- **AsyncStorage** — on-device persistence for expenses, recurring items, savings goal, and settings.
+- **[react-native-reanimated](https://docs.swmansion.com/react-native-reanimated/) / react-native-gesture-handler** — animations and gestures.
+- **[react-native-gifted-charts](https://github.com/Abhinandan-Kushwaha/react-native-gifted-charts)** — insights charts.
+- **[i18next](https://www.i18next.com/) / react-i18next** — internationalization.
+- **[date-fns](https://date-fns.org/)** — date math for allowance and insights periods.
+- **TypeScript** (strict mode) — throughout.
+- **Jest / jest-expo** — unit testing, focused on the `services`/`data` layers.
+
+## Accessibility
+
+The app targets full screen-reader support (VoiceOver/TalkBack): every interactive element has an `accessibilityRole` and meaningful label, stateful controls expose `accessibilityState`, decorative elements are hidden from assistive tech, color contrast meets WCAG AA, and dynamic content (errors, live totals) is announced via live regions. See `CLAUDE.md` for the full ruleset.
+
+## Getting started
+
+1. Install dependencies:
+
+   ```bash
+   pnpm install
+   ```
+
+2. Configure Supabase — copy `.env.example` to `.env` and fill in your project's URL/anon key (either a local `supabase start` instance or a hosted project):
+
+   ```bash
+   cp .env.example .env
+   ```
+
+3. Start the app:
+
+   ```bash
+   pnpm start
+   ```
+
+   From there, open it in a [development build](https://docs.expo.dev/develop/development-builds/introduction/), Android emulator, iOS simulator, or [Expo Go](https://expo.dev/go). Or target a platform directly with `pnpm ios` / `pnpm android` / `pnpm web`.
+
+## Scripts
+
+| Command                        | Description                  |
+| ------------------------------ | ---------------------------- |
+| `pnpm start`                   | Start the Metro dev server   |
+| `pnpm ios` / `android` / `web` | Start on a specific platform |
+| `pnpm lint`                    | Lint with `expo lint`        |
+| `pnpm format`                  | Format with Prettier         |
+| `pnpm test`                    | Run the Jest test suite      |
+| `pnpm test:watch`              | Run tests in watch mode      |
+
+## Testing
+
+Tests live next to the code they cover (`<name>.test.ts`) and target the `services`/`data` layers — pure business logic (allowance formula, mappers, aggregation) and persistence behavior. Run with `pnpm test`.
+
+## Project conventions
+
+Full contributor guidelines — layering rules, component conventions, i18n, accessibility, and testing philosophy — live in [`CLAUDE.md`](./CLAUDE.md) and [`AGENTS.md`](./AGENTS.md).
