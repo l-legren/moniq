@@ -129,6 +129,18 @@ Runner: **Jest** (`jest-expo` preset). Test files live next to the code as `<nam
 
 Prefer deleting a low-value test over keeping it. Quality and relevance over quantity.
 
+## Supabase smoke test
+
+Jest mocks `@/data/supabase` (see `jest.setup.js`), so `pnpm test` can't catch a wrong column name, a
+missing RLS policy, or a missing table grant — only a real request to Postgres can. `scripts/smoke-test-supabase.mjs`
+round-trips every Supabase-backed resource (insert/read/update/delete, cleaning up after itself)
+against the local container. It has already caught real bugs mocks missed (a missing `note`/`category`
+column, and `authenticated` role grants that RLS alone doesn't provide).
+
+Run it with `pnpm smoke` (requires `supabase start` running locally) whenever you change a
+`src/data/*.ts` or `src/services/*.ts` file that touches Supabase — before considering the change
+done, not just before committing.
+
 # Internationalisation
 
 Every string displayed in the app UI must come from i18next — no hardcoded string literals in JSX or `accessibilityLabel` props.
