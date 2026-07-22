@@ -1,5 +1,9 @@
 import { setSavingsGoal } from './savings.service';
 
+jest.mock('@/data/savings.data', () => ({
+  saveSavingsGoalValue: jest.fn().mockResolvedValue(undefined),
+}));
+
 describe('setSavingsGoal', () => {
   it('rounds to the nearest whole number', () => {
     expect(setSavingsGoal(349.6)).resolves.toBe(350);

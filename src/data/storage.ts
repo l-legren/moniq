@@ -10,9 +10,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export const STORAGE_KEYS = {
   theme: 'moniq:theme',
-  expenses: 'moniq:expenses',
-  recurring: 'moniq:recurring',
-  savingsGoal: 'moniq:savingsGoal',
 } as const;
 
 export type StorageKey = (typeof STORAGE_KEYS)[keyof typeof STORAGE_KEYS];

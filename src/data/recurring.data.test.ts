@@ -1,42 +1,52 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { ApiError } from './api-error';
+import { supabase } from './supabase';
+import { deleteRecurringRow, getRecurringRows, insertRecurringRow } from './recurring.data';
+import { mockQueryBuilder } from './test-support/supabase-query-builder';
 
-import { getRecurringRows, saveRecurringRows, type RecurringRow } from './recurring.data';
+jest.mock('./auth.data', () => ({ getCurrentUserId: jest.fn().mockResolvedValue('user-1') }));
+
+const mockFrom = supabase.from as jest.MockedFunction<typeof supabase.from>;
 
 describe('recurring.data', () => {
-  beforeEach(async () => {
-    await AsyncStorage.clear();
+  it('throws an ApiError instead of silently returning an empty list when the fetch fails', async () => {
+    mockFrom.mockReturnValue(
+      mockQueryBuilder({ data: null, error: { message: 'network error' } }) as never
+    );
+
+    await expect(getRecurringRows()).rejects.toBeInstanceOf(ApiError);
   });
 
-  it('returns an empty array when nothing is stored', async () => {
-    expect(await getRecurringRows()).toEqual([]);
-  });
-
-  it('round-trips a row with a category', async () => {
-    const row: RecurringRow = {
+  it('returns the inserted row on success', async () => {
+    const row = {
       id: '1',
       type: 'income',
       name: 'Day job',
       amount: 3000,
-      frequency: { kind: 'perpetual', cadence: 'monthly' },
+      cadence: 'monthly',
+      term_kind: 'perpetual',
+      end_date: null,
       category: 'salary',
     };
+    mockFrom.mockReturnValue(mockQueryBuilder({ data: row, error: null }) as never);
 
-    await saveRecurringRows([row]);
-
-    expect(await getRecurringRows()).toEqual([row]);
+    await expect(
+      insertRecurringRow({
+        type: 'income',
+        name: 'Day job',
+        amount: 3000,
+        cadence: 'monthly',
+        term_kind: 'perpetual',
+        end_date: null,
+        category: 'salary',
+      })
+    ).resolves.toEqual(row);
   });
 
-  it('round-trips a row without a category', async () => {
-    const row: RecurringRow = {
-      id: '2',
-      type: 'expense',
-      name: 'Rent',
-      amount: 1200,
-      frequency: { kind: 'term', cadence: 'monthly', endDate: '2027-01' },
-    };
+  it('throws an ApiError instead of silently succeeding when delete fails', async () => {
+    mockFrom.mockReturnValue(
+      mockQueryBuilder({ data: null, error: { message: 'not found' } }) as never
+    );
 
-    await saveRecurringRows([row]);
-
-    expect(await getRecurringRows()).toEqual([row]);
+    await expect(deleteRecurringRow('missing-id')).rejects.toBeInstanceOf(ApiError);
   });
 });

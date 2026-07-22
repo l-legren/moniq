@@ -1,13 +1,27 @@
 /**
- * Data layer — monthly savings goal persistence.
+ * Data layer — monthly savings goal persistence (`public.profiles.savings_goal`, one row per user).
  */
 
-import { getJSON, setJSON, STORAGE_KEYS } from './storage';
+import { ApiError } from './api-error';
+import { getCurrentUserId } from './auth.data';
+import { supabase } from './supabase';
 
 export async function getSavingsGoalValue(): Promise<number | null> {
-  return getJSON<number>(STORAGE_KEYS.savingsGoal);
+  const userId = await getCurrentUserId();
+  const { data, error } = await supabase
+    .from('profiles')
+    .select('savings_goal')
+    .eq('id', userId)
+    .single();
+  if (error) throw new ApiError(error.message, error);
+  return data.savings_goal;
 }
 
 export async function saveSavingsGoalValue(value: number): Promise<void> {
-  await setJSON(STORAGE_KEYS.savingsGoal, value);
+  const userId = await getCurrentUserId();
+  const { error } = await supabase
+    .from('profiles')
+    .update({ savings_goal: value })
+    .eq('id', userId);
+  if (error) throw new ApiError(error.message, error);
 }

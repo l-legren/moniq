@@ -1,42 +1,47 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { ApiError } from './api-error';
+import { supabase } from './supabase';
+import { deleteExpenseRow, getExpenseRows, insertExpenseRow } from './expenses.data';
+import { mockQueryBuilder } from './test-support/supabase-query-builder';
 
-import { getExpenseRows, saveExpenseRows, type ExpenseRow } from './expenses.data';
+jest.mock('./auth.data', () => ({ getCurrentUserId: jest.fn().mockResolvedValue('user-1') }));
+
+const mockFrom = supabase.from as jest.MockedFunction<typeof supabase.from>;
 
 describe('expenses.data', () => {
-  beforeEach(async () => {
-    await AsyncStorage.clear();
+  it('throws an ApiError instead of silently returning an empty list when the fetch fails', async () => {
+    mockFrom.mockReturnValue(
+      mockQueryBuilder({ data: null, error: { message: 'network error' } }) as never
+    );
+
+    await expect(getExpenseRows()).rejects.toBeInstanceOf(ApiError);
   });
 
-  it('returns an empty array when nothing is stored', async () => {
-    expect(await getExpenseRows()).toEqual([]);
-  });
-
-  it('round-trips a row with a note', async () => {
-    const row: ExpenseRow = {
+  it('returns the inserted row on success', async () => {
+    const row = {
       id: '1',
-      cat: 'other',
+      category: 'groceries',
       amount: 12.5,
-      date: '2026-07-09',
-      time: '14:30',
-      note: 'Parking ticket',
+      spent_on: '2026-07-09',
+      spent_at: '2026-07-09T14:30:00.000Z',
+      note: null,
     };
+    mockFrom.mockReturnValue(mockQueryBuilder({ data: row, error: null }) as never);
 
-    await saveExpenseRows([row]);
-
-    expect(await getExpenseRows()).toEqual([row]);
+    await expect(
+      insertExpenseRow({
+        category: 'groceries',
+        amount: 12.5,
+        spent_on: '2026-07-09',
+        spent_at: '2026-07-09T14:30:00.000Z',
+      })
+    ).resolves.toEqual(row);
   });
 
-  it('round-trips a row without a note', async () => {
-    const row: ExpenseRow = {
-      id: '2',
-      cat: 'groceries',
-      amount: 30,
-      date: '2026-07-09',
-      time: '09:00',
-    };
+  it('throws an ApiError instead of silently succeeding when delete fails', async () => {
+    mockFrom.mockReturnValue(
+      mockQueryBuilder({ data: null, error: { message: 'not found' } }) as never
+    );
 
-    await saveExpenseRows([row]);
-
-    expect(await getExpenseRows()).toEqual([row]);
+    await expect(deleteExpenseRow('missing-id')).rejects.toBeInstanceOf(ApiError);
   });
 });

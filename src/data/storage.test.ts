@@ -8,16 +8,16 @@ describe('storage', () => {
   });
 
   it('round-trips a JSON value', async () => {
-    await setJSON(STORAGE_KEYS.savingsGoal, 350);
-    expect(await getJSON<number>(STORAGE_KEYS.savingsGoal)).toBe(350);
+    await setJSON(STORAGE_KEYS.theme, 'dark');
+    expect(await getJSON<string>(STORAGE_KEYS.theme)).toBe('dark');
   });
 
   it('returns null for a missing key', async () => {
-    expect(await getJSON(STORAGE_KEYS.expenses)).toBeNull();
+    expect(await getJSON(STORAGE_KEYS.theme)).toBeNull();
   });
 
   it('returns null (instead of throwing) when the stored value is not valid JSON', async () => {
-    await AsyncStorage.setItem(STORAGE_KEYS.expenses, 'not-json{');
-    expect(await getJSON(STORAGE_KEYS.expenses)).toBeNull();
+    await AsyncStorage.setItem(STORAGE_KEYS.theme, 'not-json{');
+    expect(await getJSON(STORAGE_KEYS.theme)).toBeNull();
   });
 });
