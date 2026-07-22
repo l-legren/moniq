@@ -141,6 +141,10 @@ Run it with `pnpm smoke` (requires `supabase start` running locally) whenever yo
 `src/data/*.ts` or `src/services/*.ts` file that touches Supabase — before considering the change
 done, not just before committing.
 
+# Git commits
+
+Do not add a `Co-Authored-By: Claude` trailer to commit messages in this repo.
+
 # Internationalisation
 
 Every string displayed in the app UI must come from i18next — no hardcoded string literals in JSX or `accessibilityLabel` props.
