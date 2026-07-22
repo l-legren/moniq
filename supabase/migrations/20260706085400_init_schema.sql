@@ -45,6 +45,7 @@ create table public.expenses (
   amount numeric not null,
   spent_on date not null,
   spent_at timestamptz not null default now(),
+  note text,
   created_at timestamptz not null default now()
 );
 
@@ -70,6 +71,7 @@ create table public.recurring (
   cadence text not null check (cadence in ('monthly', 'yearly')),
   term_kind text not null check (term_kind in ('perpetual', 'term')),
   end_date date,
+  category text,
   created_at timestamptz not null default now(),
   constraint recurring_end_date_requires_term check (
     (term_kind = 'term' and end_date is not null) or
@@ -89,3 +91,9 @@ create policy "recurring_update_own" on public.recurring
   for update using (auth.uid() is not null and auth.uid() = user_id);
 create policy "recurring_delete_own" on public.recurring
   for delete using (auth.uid() is not null and auth.uid() = user_id);
+
+-- RLS policies only govern which rows are visible; the `authenticated` role also needs the base
+-- table grants below, or every query fails with "permission denied for table" regardless of RLS.
+grant select, insert, update, delete on public.profiles to authenticated;
+grant select, insert, update, delete on public.expenses to authenticated;
+grant select, insert, update, delete on public.recurring to authenticated;

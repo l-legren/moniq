@@ -7,7 +7,10 @@ const row = (over: Partial<RecurringRow>): RecurringRow => ({
   type: 'expense',
   name: 'Item',
   amount: 100,
-  frequency: { kind: 'perpetual', cadence: 'monthly' },
+  cadence: 'monthly',
+  term_kind: 'perpetual',
+  end_date: null,
+  category: null,
   ...over,
 });
 
@@ -20,21 +23,19 @@ describe('mapRowToRecurring', () => {
   });
 
   it('normalises a yearly amount to monthly (÷ 12)', () => {
-    const item = mapRowToRecurring(row({ amount: 1200, frequency: { kind: 'perpetual', cadence: 'yearly' } }));
+    const item = mapRowToRecurring(row({ amount: 1200, cadence: 'yearly' }));
     expect(item.monthlyAmount).toBe(100);
   });
 
   it('preserves a term end date', () => {
     const item = mapRowToRecurring(
-      row({ frequency: { kind: 'term', cadence: 'monthly', endDate: '2027-06' } })
+      row({ term_kind: 'term', cadence: 'monthly', end_date: '2027-06-01' })
     );
     expect(item.frequency).toEqual({ kind: 'term', cadence: 'monthly', endDate: '2027-06' });
   });
 
   it('falls back to expense/monthly for unrecognised values', () => {
-    const item = mapRowToRecurring(
-      row({ type: 'weird', frequency: { kind: 'perpetual', cadence: 'weekly' } })
-    );
+    const item = mapRowToRecurring(row({ type: 'weird', cadence: 'weekly' }));
     expect(item.type).toBe('expense');
     expect(item.frequency.cadence).toBe('monthly');
   });
@@ -43,7 +44,7 @@ describe('mapRowToRecurring', () => {
 describe('totals', () => {
   const items = [
     mapRowToRecurring(row({ id: 'a', type: 'income', amount: 2400 })),
-    mapRowToRecurring(row({ id: 'b', type: 'income', amount: 1200, frequency: { kind: 'perpetual', cadence: 'yearly' } })),
+    mapRowToRecurring(row({ id: 'b', type: 'income', amount: 1200, cadence: 'yearly' })),
     mapRowToRecurring(row({ id: 'c', type: 'expense', amount: 950 })),
   ];
 

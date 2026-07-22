@@ -14,7 +14,14 @@ import {
 } from './insights.service';
 
 const exp = (date: string, cat: string, amount: number) =>
-  mapRowToExpense({ id: `${date}-${cat}`, cat, amount, date, time: '00:00' } as ExpenseRow);
+  mapRowToExpense({
+    id: `${date}-${cat}`,
+    category: cat,
+    amount,
+    spent_on: date,
+    spent_at: `${date}T00:00:00.000Z`,
+    note: null,
+  } as ExpenseRow);
 
 // Week starting Monday 2026-06-29 … Sunday 2026-07-05.
 const list = [

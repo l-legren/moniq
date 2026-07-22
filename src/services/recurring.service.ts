@@ -7,9 +7,13 @@ import {
   RECURRING_EXPENSE_CATEGORY_IDS,
   type RecurringCategoryId,
 } from '@/constants/categories';
-import { getRecurringRows, saveRecurringRows, type RecurringRow } from '@/data/recurring.data';
-
-import { makeId } from '@/utils/id';
+import {
+  deleteRecurringRow,
+  getRecurringRows,
+  insertRecurringRow,
+  type NewRecurringRow,
+  type RecurringRow,
+} from '@/data/recurring.data';
 
 export type RecurringType = 'income' | 'expense';
 export type Cadence = 'monthly' | 'yearly';
@@ -53,10 +57,10 @@ export function monthlyAmountOf(amount: number, cadence: Cadence): number {
 }
 
 export function mapRowToRecurring(row: RecurringRow): RecurringItem {
-  const cadence = toCadence(row.frequency.cadence);
+  const cadence = toCadence(row.cadence);
   const frequency: Frequency =
-    row.frequency.kind === 'term'
-      ? { kind: 'term', cadence, endDate: row.frequency.endDate }
+    row.term_kind === 'term' && row.end_date
+      ? { kind: 'term', cadence, endDate: row.end_date.slice(0, 7) }
       : { kind: 'perpetual', cadence };
 
   const type = toType(row.type);
@@ -68,7 +72,7 @@ export function mapRowToRecurring(row: RecurringRow): RecurringItem {
     amount: row.amount,
     frequency,
     monthlyAmount: monthlyAmountOf(row.amount, cadence),
-    category: toCategory(type, row.category),
+    category: toCategory(type, row.category ?? undefined),
   };
 }
 
@@ -86,22 +90,21 @@ export type NewRecurring = {
 };
 
 export async function addRecurring(input: NewRecurring): Promise<RecurringItem> {
-  const row: RecurringRow = {
-    id: makeId(),
+  const row: NewRecurringRow = {
     type: input.type,
     name: input.name.trim(),
     amount: input.amount,
-    frequency: input.frequency,
+    cadence: input.frequency.cadence,
+    term_kind: input.frequency.kind,
+    end_date: input.frequency.kind === 'term' ? `${input.frequency.endDate}-01` : null,
     category: input.category,
   };
-  const rows = await getRecurringRows();
-  await saveRecurringRows([row, ...rows]);
-  return mapRowToRecurring(row);
+  const inserted = await insertRecurringRow(row);
+  return mapRowToRecurring(inserted);
 }
 
 export async function deleteRecurring(id: string): Promise<void> {
-  const rows = await getRecurringRows();
-  await saveRecurringRows(rows.filter((row) => row.id !== id));
+  await deleteRecurringRow(id);
 }
 
 export function incomeTotal(items: RecurringItem[]): number {

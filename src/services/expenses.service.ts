@@ -3,10 +3,15 @@
  */
 
 import { CATEGORY_IDS, type CategoryId } from '@/constants/categories';
-import { getExpenseRows, saveExpenseRows, type ExpenseRow } from '@/data/expenses.data';
+import {
+  deleteExpenseRow,
+  getExpenseRows,
+  insertExpenseRow,
+  type ExpenseRow,
+  type NewExpenseRow,
+} from '@/data/expenses.data';
 
-import { todayISO, isoTime } from '@/utils/date';
-import { makeId } from '@/utils/id';
+import { isoTime, todayISO } from '@/utils/date';
 
 export type Expense = {
   id: string;
@@ -26,14 +31,15 @@ function toCategory(value: string): CategoryId {
     : DEFAULT_CATEGORY;
 }
 
+/** `spent_at` is a full timestamp; the domain model keeps date/time as separate local-format fields. */
 export function mapRowToExpense(row: ExpenseRow): Expense {
   return {
     id: row.id,
-    category: toCategory(row.cat),
+    category: toCategory(row.category),
     amount: row.amount,
-    date: row.date,
-    time: row.time,
-    note: row.note,
+    date: row.spent_on,
+    time: isoTime(new Date(row.spent_at)),
+    note: row.note ?? undefined,
   };
 }
 
@@ -46,22 +52,19 @@ export type NewExpense = { category: CategoryId; amount: number; note?: string }
 
 export async function addExpense(input: NewExpense): Promise<Expense> {
   const now = new Date();
-  const row: ExpenseRow = {
-    id: makeId(),
-    cat: input.category,
+  const row: NewExpenseRow = {
+    category: input.category,
     amount: input.amount,
-    date: todayISO(now),
-    time: isoTime(now),
+    spent_on: todayISO(now),
+    spent_at: now.toISOString(),
     note: input.note,
   };
-  const rows = await getExpenseRows();
-  await saveExpenseRows([row, ...rows]);
-  return mapRowToExpense(row);
+  const inserted = await insertExpenseRow(row);
+  return mapRowToExpense(inserted);
 }
 
 export async function deleteExpense(id: string): Promise<void> {
-  const rows = await getExpenseRows();
-  await saveExpenseRows(rows.filter((row) => row.id !== id));
+  await deleteExpenseRow(id);
 }
 
 /** Expenses logged on `day` (defaults to today). */

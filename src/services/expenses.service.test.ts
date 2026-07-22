@@ -4,28 +4,29 @@ import { expensesOn, mapRowToExpense, sumAmount } from './expenses.service';
 
 const row = (over: Partial<ExpenseRow>): ExpenseRow => ({
   id: '1',
-  cat: 'groceries',
+  category: 'groceries',
   amount: 10,
-  date: '2026-07-02',
-  time: '12:00',
+  spent_on: '2026-07-02',
+  spent_at: '2026-07-02T12:00:00.000Z',
+  note: null,
   ...over,
 });
 
 describe('mapRowToExpense', () => {
   it('maps a known category', () => {
-    expect(mapRowToExpense(row({ cat: 'drinks' })).category).toBe('drinks');
+    expect(mapRowToExpense(row({ category: 'drinks' })).category).toBe('drinks');
   });
 
   it('falls back to "other" for an unknown category', () => {
-    expect(mapRowToExpense(row({ cat: 'bogus' })).category).toBe('other');
+    expect(mapRowToExpense(row({ category: 'bogus' })).category).toBe('other');
   });
 });
 
 describe('expensesOn / sumAmount', () => {
   const list = [
-    mapRowToExpense(row({ id: '1', cat: 'drinks', amount: 3.8, date: '2026-07-02' })),
-    mapRowToExpense(row({ id: '2', cat: 'groceries', amount: 12.4, date: '2026-07-02' })),
-    mapRowToExpense(row({ id: '3', cat: 'other', amount: 5, date: '2026-07-01' })),
+    mapRowToExpense(row({ id: '1', category: 'drinks', amount: 3.8, spent_on: '2026-07-02' })),
+    mapRowToExpense(row({ id: '2', category: 'groceries', amount: 12.4, spent_on: '2026-07-02' })),
+    mapRowToExpense(row({ id: '3', category: 'other', amount: 5, spent_on: '2026-07-01' })),
   ];
 
   it('filters to a single day', () => {
