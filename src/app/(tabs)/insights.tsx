@@ -7,11 +7,13 @@ import { InsightsChart } from '@/components/insights/insights-chart';
 import { InsightsTips } from '@/components/insights/insights-tips';
 import { PeriodNavigator } from '@/components/insights/period-navigator';
 import { SavedSummary } from '@/components/insights/saved-summary';
+import { SavingsTargetsCard } from '@/components/insights/savings-targets-card';
 import { PillToggle } from '@/components/ui/pill-toggle';
 import { Screen } from '@/components/ui/screen';
 import { AppText } from '@/components/ui/text';
 import { Spacing } from '@/constants/theme';
 import { useInsights, type InsightsMode } from '@/hooks/use-insights';
+import { useSavingsTargets } from '@/hooks/use-savings-targets';
 
 const CURRENT_PERIOD_INDEX = 2; // last of the 3 tracked periods
 
@@ -20,6 +22,7 @@ export default function InsightsScreen() {
   const [mode, setMode] = useState<InsightsMode>('monthly');
   const [index, setIndex] = useState(CURRENT_PERIOD_INDEX);
   const view = useInsights(mode, index);
+  const { data: savingsTargets = [] } = useSavingsTargets();
 
   const changeMode = (next: InsightsMode) => {
     setMode(next);
@@ -63,6 +66,7 @@ export default function InsightsScreen() {
 
         <InsightsChart title={view.chartTitle} footer={view.chartFooter} bars={view.bars} />
         <CategoryBreakdown breakdown={view.breakdown} mode={mode} periodIndex={index} />
+        <SavingsTargetsCard targets={savingsTargets} />
         <InsightsTips />
       </ScrollView>
     </Screen>

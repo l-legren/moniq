@@ -34,3 +34,9 @@ export function formatMonthYear(ym: string): string {
   if (!/^\d{4}-\d{2}$/.test(ym)) return '';
   return format(parseISO(`${ym}-01`), 'MMM yyyy');
 }
+
+/** `YYYY-MM-DD` → e.g. `Mar 2027` (a savings target's deadline, shown month-level). */
+export function formatTargetDate(isoDate: string): string {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(isoDate)) return '';
+  return format(parseISO(isoDate), 'MMM yyyy');
+}

@@ -139,6 +139,18 @@
       "weekendBody": "You tend to stay under budget on weekdays but run over Fri–Sun. A small weekend buffer would smooth things out."
     }
   },
+  "savingsTargets": {
+    "title": "Savings targets",
+    "empty": "No savings targets yet",
+    "savedOfGoal": "{{saved}} saved of {{goal}}",
+    "categoryAndDate": "{{category}} · By {{date}}",
+    "rowLabel": "{{name}}, {{category}}, {{saved}} saved of {{goal}}, by {{date}}, {{priority}}",
+    "priority": {
+      "high": "High priority",
+      "medium": "Medium priority",
+      "low": "Low priority"
+    }
+  },
   "settings": {
     "title": "Settings",
     "appearance": "Appearance",
