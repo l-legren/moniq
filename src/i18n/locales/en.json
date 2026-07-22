@@ -37,6 +37,14 @@
       "rent": "Rent",
       "car": "Car",
       "installments": "Installments"
+    },
+    "savingsTarget": {
+      "travel": "Travel",
+      "electronics": "Electronics",
+      "home": "Home",
+      "car": "Car",
+      "education": "Education",
+      "emergencyFund": "Emergency fund"
     }
   },
   "today": {

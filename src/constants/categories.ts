@@ -104,6 +104,39 @@ export const RECURRING_EXPENSE_CATEGORY_ICONS: Record<RecurringExpenseCategoryId
 
 export type RecurringCategoryId = IncomeCategoryId | RecurringExpenseCategoryId;
 
+/** Categories for savings targets — what the goal is for. */
+export const SAVINGS_TARGET_CATEGORY_IDS = [
+  'travel',
+  'electronics',
+  'home',
+  'car',
+  'education',
+  'emergencyFund',
+  'other',
+] as const;
+
+export type SavingsTargetCategoryId = (typeof SAVINGS_TARGET_CATEGORY_IDS)[number];
+
+export const SAVINGS_TARGET_CATEGORY_LABEL_KEYS: Record<SavingsTargetCategoryId, string> = {
+  travel: 'categories.savingsTarget.travel',
+  electronics: 'categories.savingsTarget.electronics',
+  home: 'categories.savingsTarget.home',
+  car: 'categories.savingsTarget.car',
+  education: 'categories.savingsTarget.education',
+  emergencyFund: 'categories.savingsTarget.emergencyFund',
+  other: 'categories.other',
+};
+
+export const SAVINGS_TARGET_CATEGORY_ICONS: Record<SavingsTargetCategoryId, IoniconName> = {
+  travel: 'airplane-outline',
+  electronics: 'laptop-outline',
+  home: 'home-outline',
+  car: 'car-outline',
+  education: 'school-outline',
+  emergencyFund: 'shield-checkmark-outline',
+  other: 'ellipsis-horizontal-circle-outline',
+};
+
 /** Icon for a recurring item's category — the set differs between income and fixed costs. */
 export function recurringCategoryIcon(
   isIncome: boolean,

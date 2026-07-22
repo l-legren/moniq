@@ -66,6 +66,7 @@
     "format": "prettier --write .",
     "test": "jest",
     "test:watch": "jest --watch",
+    "smoke": "node scripts/smoke-test-supabase.mjs",
     "prepare": "husky"
   },
   "lint-staged": {
